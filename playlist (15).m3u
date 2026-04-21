@@ -14,6 +14,15 @@ https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_sportv3.m3u8
 #EXTINF:-1 tvg-logo="https://r2.thesportsdb.com/images/media/channel/logo/wzqgsk1700902680.png",SPORT TV 4
 #EXTGRP:DESPORTO
 https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_sportv4.m3u8
+#EXTINF:-1 tvg-logo="https://r2.thesportsdb.com/images/media/channel/logo/ldsp6c1700902696.png",SPORT TV 5
+#EXTGRP:DESPORTO
+https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_sportv5.m3u8
+#EXTINF:-1 tvg-logo="https://r2.thesportsdb.com/images/media/channel/logo/1ajyjo1700902708.png",SPORT TV 6
+#EXTGRP:DESPORTO
+https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_sportv6.m3u8
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/f/f3/Sport_TV7_%282024%29.png",SPORT TV 7
+#EXTGRP:DESPORTO
+https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_sportv7.m3u8
 #EXTINF:-1,DAZN 3
 #EXTGRP:DESPORTO
 https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_eleven3.m3u8
