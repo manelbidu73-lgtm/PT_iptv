@@ -1,10 +1,13 @@
 #EXTM3U
 #EXTINF:-1,RTP 1
-#EXTGRP:DESPORTO
+#EXTGRP:NOTÍCIAS
 https://streaming-live.rtp.pt/liverepeater/smil:rtp1HD.smil/chunklist_b2540000_slpor.m3u8
-#EXTINF:-1,SPORTTV 1
+#EXTINF:-1 tvg-logo="https://images.seeklogo.com/logo-png/50/2/sport-tv1-2023-logo-png_seeklogo-504106.png",SPORT TV 1
 #EXTGRP:DESPORTO
 https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_sportv1.m3u8
+#EXTINF:-1,SPORT TV 2
+#EXTGRP:DESPORTO
+https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_sportv2.m3u8
 #EXTINF:-1,DAZN 3
 #EXTGRP:DESPORTO
 https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_eleven3.m3u8
