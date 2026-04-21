@@ -1,4 +1,7 @@
 #EXTM3U
+#EXTINF:-1,SPORTTV 1
+#EXTGRP:DESPORTO
+https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_sportv1.m3u8
 #EXTINF:-1,DAZN 3
 #EXTGRP:DESPORTO
 https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_eleven3.m3u8
