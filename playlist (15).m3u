@@ -8,22 +8,22 @@ https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_sportv1.m3u8
 #EXTINF:-1 tvg-id="SPORTTV2(src05).pt" tvg-logo="https://mage.stream.nos.pt/mage/v1/Images?sourceUri=http%3A%2F%2Fvip.repositories.local.internal%2FRepositories.EPG%2FOttChannelIcons%2FSPTV_2HD.png&profile=ott_16_220x64&client_id=xe1dgrShwdR1DVOKGmsj8Ut4QLlGyOFI&format=image/png.pt",SPORT TV 2
 #EXTGRP:DESPORTO
 https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_sportv2.m3u8
-#EXTINF:-1 tvg-id="SPORTTV3(src05).pt" tvg-logo="https://r2.thesportsdb.com/images/media/channel/logo/fjy5d31700902671.png",SPORT TV 3
+#EXTINF:-1 tvg-id="SPORTTV3(src05).pt" tvg-logo="https://mage.stream.nos.pt/mage/v1/Images?sourceUri=http%3A%2F%2Fvip.repositories.local.internal%2FRepositories.EPG%2FOttChannelIcons%2FSPTV_3HD.png&profile=ott_16_220x64&client_id=xe1dgrShwdR1DVOKGmsj8Ut4QLlGyOFI&format=image/png.pt",SPORT TV 3
 #EXTGRP:DESPORTO
 https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_sportv3.m3u8
-#EXTINF:-1 tvg-id="SPORTTV4(src05).pt" tvg-logo="https://r2.thesportsdb.com/images/media/channel/logo/wzqgsk1700902680.png",SPORT TV 4
+#EXTINF:-1 tvg-id="SPORTTV4(src05).pt" tvg-logo="https://mage.stream.nos.pt/mage/v1/Images?sourceUri=http%3A%2F%2Fvip.repositories.local.internal%2FRepositories.EPG%2FOttChannelIcons%2FSPTV_4HD.png&profile=ott_16_220x64&client_id=xe1dgrShwdR1DVOKGmsj8Ut4QLlGyOFI&format=image/png.pt"",SPORT TV 4
 #EXTGRP:DESPORTO
 https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_sportv4.m3u8
-#EXTINF:-1 tvg-id="SPORTTV5(src05).pt" tvg-logo="https://r2.thesportsdb.com/images/media/channel/logo/ldsp6c1700902696.png",SPORT TV 5
+#EXTINF:-1 tvg-id="SPORTTV5(src05).pt" tvg-logo="https://mage.stream.nos.pt/mage/v1/Images?sourceUri=http%3A%2F%2Fvip.repositories.local.internal%2FRepositories.EPG%2FOttChannelIcons%2FSPTV_5HD.png&profile=ott_16_220x64&client_id=xe1dgrShwdR1DVOKGmsj8Ut4QLlGyOFI&format=image/png.pt"",SPORT TV 5
 #EXTGRP:DESPORTO
 https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_sportv5.m3u8
-#EXTINF:-1 tvg-id="SPORTTV6(src05).pt" tvg-logo="https://r2.thesportsdb.com/images/media/channel/logo/1ajyjo1700902708.png",SPORT TV 6
+#EXTINF:-1 tvg-id="SPORTTV6(src05).pt" tvg-logo="https://mage.stream.nos.pt/mage/v1/Images?sourceUri=http%3A%2F%2Fvip.repositories.local.internal%2FRepositories.EPG%2FOttChannelIcons%2FSPTV_6HD.png&profile=ott_16_220x64&client_id=xe1dgrShwdR1DVOKGmsj8Ut4QLlGyOFI&format=image/png.pt"",SPORT TV 6
 #EXTGRP:DESPORTO
 https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_sportv6.m3u8
-#EXTINF:-1 tvg-id="SPORTTV7(src05).pt" tvg-logo="https://i1.wp.com/portugalgamers.pt/wp-content/uploads/2024/08/SportTV7_lancamento.jpeg?fit=1600%2C900&ssl=1",SPORT TV 7
+#EXTINF:-1 tvg-id="SPORTTV7(src05).pt" tvg-logo="https://mage.stream.nos.pt/mage/v1/Images?sourceUri=http%3A%2F%2Fvip.repositories.local.internal%2FRepositories.EPG%2FOttChannelIcons%2FSPTV_7HD.png&profile=ott_16_220x64&client_id=xe1dgrShwdR1DVOKGmsj8Ut4QLlGyOFI&format=image/png.pt"",SPORT TV 7
 #EXTGRP:DESPORTO
 https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_sportv7.m3u8
-#EXTINF:-1 tvg-id="BTV1(src05).pt" tvg-logo="https://r2.thesportsdb.com/images/media/channel/logo/o89qgl1601130898.png",Benfica TV
+#EXTINF:-1 tvg-id="BTV1(src05).pt" tvg-logo="https://r2.thesportsdb.com/images/media/channel/logo/o89qgl1601130898.png",BTV
 #EXTGRP:DESPORTO
 https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_benficatv.m3u8
 #EXTINF:-1 tvg-id="DAZN1(src05).pt" ,DAZN 1
