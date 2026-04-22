@@ -11,27 +11,27 @@ https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_sportv2.m3u8
 #EXTINF:-1 tvg-id="SPORTTV3(src05).pt" tvg-logo="https://mage.stream.nos.pt/mage/v1/Images?sourceUri=http%3A%2F%2Fvip.repositories.local.internal%2FRepositories.EPG%2FOttChannelIcons%2FSPTV_3HD.png&profile=ott_16_220x64&client_id=xe1dgrShwdR1DVOKGmsj8Ut4QLlGyOFI&format=image/png.pt",SPORT TV 3
 #EXTGRP:DESPORTO
 https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_sportv3.m3u8
-#EXTINF:-1 tvg-id="SPORTTV4(src05).pt" tvg-logo="https://mage.stream.nos.pt/mage/v1/Images?sourceUri=http%3A%2F%2Fvip.repositories.local.internal%2FRepositories.EPG%2FOttChannelIcons%2FSPTV_4HD.png&profile=ott_16_220x64&client_id=xe1dgrShwdR1DVOKGmsj8Ut4QLlGyOFI&format=image/png.pt"",SPORT TV 4
+#EXTINF:-1 tvg-id="SPORTTV4(src05).pt" tvg-logo="https://mage.stream.nos.pt/mage/v1/Images?sourceUri=http%3A%2F%2Fvip.repositories.local.internal%2FRepositories.EPG%2FOttChannelIcons%2FSPTV_4HD.png&profile=ott_16_220x64&client_id=xe1dgrShwdR1DVOKGmsj8Ut4QLlGyOFI&format=image/png.pt",SPORT TV 4
 #EXTGRP:DESPORTO
 https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_sportv4.m3u8
-#EXTINF:-1 tvg-id="SPORTTV5(src05).pt" tvg-logo="https://mage.stream.nos.pt/mage/v1/Images?sourceUri=http%3A%2F%2Fvip.repositories.local.internal%2FRepositories.EPG%2FOttChannelIcons%2FSPTV_5HD.png&profile=ott_16_220x64&client_id=xe1dgrShwdR1DVOKGmsj8Ut4QLlGyOFI&format=image/png.pt"",SPORT TV 5
+#EXTINF:-1 tvg-id="SPORTTV5(src05).pt" tvg-logo="https://mage.stream.nos.pt/mage/v1/Images?sourceUri=http%3A%2F%2Fvip.repositories.local.internal%2FRepositories.EPG%2FOttChannelIcons%2FSPTV_5HD.png&profile=ott_16_220x64&client_id=xe1dgrShwdR1DVOKGmsj8Ut4QLlGyOFI&format=image/png.pt",SPORT TV 5
 #EXTGRP:DESPORTO
 https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_sportv5.m3u8
-#EXTINF:-1 tvg-id="SPORTTV6(src05).pt" tvg-logo="https://mage.stream.nos.pt/mage/v1/Images?sourceUri=http%3A%2F%2Fvip.repositories.local.internal%2FRepositories.EPG%2FOttChannelIcons%2FSPTV_6HD.png&profile=ott_16_220x64&client_id=xe1dgrShwdR1DVOKGmsj8Ut4QLlGyOFI&format=image/png.pt"",SPORT TV 6
+#EXTINF:-1 tvg-id="SPORTTV6(src05).pt" tvg-logo="https://mage.stream.nos.pt/mage/v1/Images?sourceUri=http%3A%2F%2Fvip.repositories.local.internal%2FRepositories.EPG%2FOttChannelIcons%2FSPTV_6HD.png&profile=ott_16_220x64&client_id=xe1dgrShwdR1DVOKGmsj8Ut4QLlGyOFI&format=image/png.pt",SPORT TV 6
 #EXTGRP:DESPORTO
 https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_sportv6.m3u8
-#EXTINF:-1 tvg-id="SPORTTV7(src05).pt" tvg-logo="https://mage.stream.nos.pt/mage/v1/Images?sourceUri=http%3A%2F%2Fvip.repositories.local.internal%2FRepositories.EPG%2FOttChannelIcons%2FSPTV_7HD.png&profile=ott_16_220x64&client_id=xe1dgrShwdR1DVOKGmsj8Ut4QLlGyOFI&format=image/png.pt"",SPORT TV 7
+#EXTINF:-1 tvg-id="SPORTTV7(src05).pt" tvg-logo="https://mage.stream.nos.pt/mage/v1/Images?sourceUri=http%3A%2F%2Fvip.repositories.local.internal%2FRepositories.EPG%2FOttChannelIcons%2FSPTV_7HD.png&profile=ott_16_220x64&client_id=xe1dgrShwdR1DVOKGmsj8Ut4QLlGyOFI&format=image/png.pt",SPORT TV 7
 #EXTGRP:DESPORTO
 https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_sportv7.m3u8
-#EXTINF:-1 tvg-id="BTV1(src05).pt" tvg-logo="https://r2.thesportsdb.com/images/media/channel/logo/o89qgl1601130898.png",BTV
+#EXTINF:-1 tvg-id="BTV1(src05).pt" tvg-logo="https://mage.stream.nos.pt/mage/v1/Images?sourceUri=http%3A%2F%2Fvip.repositories.local.internal%2FRepositories.EPG%2FOttChannelIcons%2FBENFICATV1HD.png&profile=ott_16_220x64&client_id=xe1dgrShwdR1DVOKGmsj8Ut4QLlGyOFI&format=image/png.pt",BTV
 #EXTGRP:DESPORTO
 https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_benficatv.m3u8
-#EXTINF:-1 tvg-id="DAZN1(src05).pt" ,DAZN 1
+#EXTINF:-1 tvg-id="DAZN1(src05).pt" tvg-logo="https://mage.stream.nos.pt/mage/v1/Images?sourceUri=http%3A%2F%2Fvip.repositories.local.internal%2FRepositories.EPG%2FOttChannelIcons%2Fcanalnos1.png&profile=ott_16_220x64&client_id=xe1dgrShwdR1DVOKGmsj8Ut4QLlGyOFI&format=image/png.pt",DAZN 1
 #EXTGRP:DESPORTO
 https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_eleven1.m3u8
-#EXTINF:-1 tvg-id="DAZN2(src05).pt",DAZN 2
+#EXTINF:-1 tvg-id="DAZN2(src05).pt" tvg-logo="https://mage.stream.nos.pt/mage/v1/Images?sourceUri=http%3A%2F%2Fvip.repositories.local.internal%2FRepositories.EPG%2FOttChannelIcons%2Fcanalnos2.png&profile=ott_16_220x64&client_id=xe1dgrShwdR1DVOKGmsj8Ut4QLlGyOFI&format=image/png.pt",DAZN 2
 #EXTGRP:DESPORTO
 https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_eleven2.m3u8
-#EXTINF:-1 tvg-id="DAZN3(src05).pt" ,DAZN 3
+#EXTINF:-1 tvg-id="DAZN3(src05).pt" tvg-logo="https://mage.stream.nos.pt/mage/v1/Images?sourceUri=http%3A%2F%2Fvip.repositories.local.internal%2FRepositories.EPG%2FOttChannelIcons%2Fcanalnos3.png&profile=ott_16_220x64&client_id=xe1dgrShwdR1DVOKGmsj8Ut4QLlGyOFI&format=image/png.pt",DAZN 3
 #EXTGRP:DESPORTO
 https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_eleven3.m3u8
