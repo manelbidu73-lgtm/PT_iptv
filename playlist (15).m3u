@@ -23,13 +23,13 @@ https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_sportv6.m3u8
 #EXTINF:-1 tvg-logo="https://i1.wp.com/portugalgamers.pt/wp-content/uploads/2024/08/SportTV7_lancamento.jpeg?fit=1600%2C900&ssl=1",SPORT TV 7
 #EXTGRP:DESPORTO
 https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_sportv7.m3u8
-#EXTINF:-1 tvg-logo="https://r2.thesportsdb.com/images/media/channel/logo/o89qgl1601130898.png",Benfica TV
+#EXTINF:-1 tvg-id="BTV1(src05).pt" tvg-logo="https://r2.thesportsdb.com/images/media/channel/logo/o89qgl1601130898.png",Benfica TV
 #EXTGRP:DESPORTO
 https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_benficatv.m3u8
 #EXTINF:-1,DAZN 1
 #EXTGRP:DESPORTO
 https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_eleven1.m3u8
-#EXTINF:-1,DAZN 2
+#EXTINF:-1 tvg-id="DAZN2(src05).pt",DAZN 2
 #EXTGRP:DESPORTO
 https://xnn--d2ma04s8hp22.cloudfronte.lat/zzstream/pt_eleven2.m3u8
 #EXTINF:-1,DAZN 3
