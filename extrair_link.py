@@ -1,64 +1,77 @@
 import requests
 import re
 import os
+import sys
 
-# URL que queres extrair (o que me deste)
-url_alvo = "http://www.sportstvhdonline.com/index.php?canal=sporttv"
+# URL Alvo: Podes trocar para o que quiseres (TVI, SportTV, etc.)
+url_alvo = "https://tviplayer.iol.pt/direto" 
 
-# Headers idênticos aos que o Thom usa para enganar o site
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-    'Referer': 'http://www.sportstvhdonline.com/',
-    'Origin': 'http://www.sportstvhdonline.com'
+    'Referer': 'https://tviplayer.iol.pt/',
+    'Accept-Language': 'pt-PT,pt;q=0.9'
 }
 
-def extrair_estilo_thom():
+def limpar_link(link):
+    """Limpa barras invertidas e aspas de links extraídos de scripts"""
+    return link.replace("\\/", "/").replace("\\", "").replace('"', '').replace("'", "")
+
+def extrair_universal():
     try:
-        # Garante que a pasta m3u8s existe (essencial para não dar erro)
+        # Garante que a pasta m3u8s existe (essencial para o GitHub)
         if not os.path.exists("m3u8s"):
             os.makedirs("m3u8s")
 
-        print(f"A iniciar extração de: {url_alvo}")
+        print(f"--- A iniciar pesca profunda em: {url_alvo} ---")
         sessao = requests.Session()
+        sessao.headers.update(headers)
         
-        # 1. Acede à página principal para capturar cookies de sessão
-        res = sessao.get(url_alvo, headers=headers, timeout=20)
+        # 1. Tenta ler a página principal
+        res = sessao.get(url_alvo, timeout=20)
         
-        # 2. Procura o iFrame do player (técnica comum nestes sites)
-        iframe_match = re.search(r'iframe.*?src=["\'](.*?)["\']', res.text)
+        # 2. Procura links .m3u8 (com ou sem tokens) no código-fonte
+        # Esta expressão regular é a mais potente para links dinâmicos
+        links = re.findall(r'https?://[^\s"\'<> ]+\.m3u8(?:\?[^\s"\'<> ]+)?', res.text)
         
-        if iframe_match:
-            player_url = iframe_match.group(1)
-            if player_url.startswith("//"):
-                player_url = "http:" + player_url
-            
-            print(f"A aceder ao player escondido: {player_url}")
-            # Altera o referer para o player aceitar o pedido
-            headers['Referer'] = url_alvo
-            res_player = sessao.get(player_url, headers=headers, timeout=20)
-            
-            # 3. Procura o link .m3u8 final dentro do player
-            # O Thom usa esta expressão regular para limpar barras invertidas de JS
-            links = re.findall(r'["\'](https?://[^\s"\'<> ]+\.m3u8[^\s"\'<> ]*)["\']', res_player.text)
-            
-            if links:
-                link_final = links[0].replace("\\", "")
+        # 3. Se não encontrar, procura por iFrames (técnica para sites de desporto)
+        if not links:
+            print("Link direto não encontrado. A vasculhar iFrames...")
+            iframes = re.findall(r'iframe.*?src=["\'](.*?)["\']', res.text)
+            for f_url in iframes:
+                if f_url.startswith("//"): f_url = "https:" + f_url
+                if not f_url.startswith("http"): f_url = "https://iol.pt" + f_url
                 
-                # 4. Grava o ficheiro na pasta m3u8s (igual ao repositório dele)
-                with open("m3u8s/sporttv.m3u8", "w") as f:
-                    f.write("#EXTM3U\n")
-                    f.write("#EXTINF:-1, SportTV HD\n")
-                    f.write(link_final)
-                
-                print(f"Sucesso! Link pescado: {link_final}")
-                return
+                try:
+                    print(f"A analisar janela escondida: {f_url}")
+                    res_f = sessao.get(f_url, timeout=15)
+                    links += re.findall(r'https?://[^\s"\'<> ]+\.m3u8(?:\?[^\s"\'<> ]+)?', res_f.text)
+                except:
+                    continue
 
-        print("Não foi possível encontrar o stream. O canal pode estar em pausa.")
-        exit(1)
+        # 4. Se ainda assim não encontrar, tenta procurar variáveis de vídeo (source)
+        if not links:
+            links = re.findall(r'source:\s*["\'](http[^\s"\']+)["\']', res.text)
+
+        if links:
+            # Filtra links duplicados e limpa o primeiro encontrado
+            link_final = limpar_link(links[0])
+            
+            # Define o nome do ficheiro conforme o canal
+            nome = "tvi.m3u8" if "tvi" in url_alvo else "canal_auto.m3u8"
+
+            with open(f"m3u8s/{nome}", "w") as f:
+                f.write("#EXTM3U\n")
+                f.write(f"#EXTINF:-1, Canal Automático\n")
+                f.write(link_final)
+            
+            print(f"✅ SUCESSO! Link pescado: {link_final}")
+        else:
+            print("❌ ERRO: Não foi possível encontrar nenhum stream.")
+            sys.exit(1)
 
     except Exception as e:
-        print(f"Erro no processo: {e}")
-        exit(1)
+        print(f"⚠️ Erro crítico: {e}")
+        sys.exit(1)
 
 if __name__ == "__main__":
-    extrair_estilo_thom()
+    extrair_universal()
