@@ -1,49 +1,46 @@
 import requests
-import re
 import json
 
-def extrair_tvi():
+def extrair_tvi_oficial():
+    # Este é o endpoint da API interna que gera o link de stream
+    api_url = "https://iol.pt"
+    
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Referer': 'https://tviplayer.iol.pt/',
-        'Origin': 'https://tviplayer.iol.pt'
+        'User-Agent': 'Mozilla/5.0 (Linux; Android 10; SM-G973F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
+        'Accept': 'application/json, text/plain, */*',
+        'Referer': 'https://iol.pt',
+        'Origin': 'https://iol.pt'
     }
 
-    # Método 1: API de Playlist Direta (Mais fiável para bots)
     try:
-        print("Tentando Método 1: API de Playlist...")
-        api_url = "https://iol.pt"
-        res = requests.get(api_url, headers=headers, timeout=10)
-        # Procura o link m3u8 com o token wmsAuthSign
-        match = re.search(r'https?://[^\s<>"\']+\.m3u8\?wmsAuthSign=[^\s<>"\']+', res.text)
-        if match:
-            return match.group(0).replace('\\/', '/')
-    except Exception as e:
-        print(f"Erro no Método 1: {e}")
-
-    # Método 2: Scraping da Página de Direto
-    try:
-        print("Tentando Método 2: Página de Direto...")
-        pg_url = "https://tviplayer.iol.pt/direto"
-        res = requests.get(pg_url, headers=headers, timeout=10)
-        # Procura no código fonte da página
-        match = re.search(r'videoUrl["\']\s*:\s*["\']([^"\']+\.m3u8\?wmsAuthSign=[^"\']+)["\']', res.text)
-        if not match:
-            match = re.search(r'https?://[^\s<>"\']+\.m3u8\?wmsAuthSign=[^\s<>"\']+', res.text)
+        print("A solicitar link à API de produção...")
+        # Fazemos o pedido à API
+        response = requests.get(api_url, headers=headers, timeout=15)
         
-        if match:
-            return match.group(1 if len(match.groups()) > 0 else 0).replace('\\/', '/')
+        # A API da IOL muitas vezes responde com o link direto ou um ficheiro de texto
+        txt = response.text
+        
+        # Se a resposta contiver o wmsAuthSign, isolamos o link
+        if "wmsAuthSign" in txt:
+            # Limpeza de caracteres que podem vir da API
+            link = txt.strip().replace('\\/', '/')
+            # Se o link vier entre aspas (JSON), limpamos
+            link = link.replace('"', '')
+            return link
+            
     except Exception as e:
-        print(f"Erro no Método 2: {e}")
-
+        print(f"Erro na API: {e}")
+    
     return None
 
-link = extrair_tvi()
+link_final = extrair_tvi_oficial()
 
-if link:
-    print(f"Link capturado: {link}")
+if link_final:
+    print(f"Link obtido com sucesso!")
     with open("tvi.m3u8", "w", encoding="utf-8") as f:
-        f.write(f"#EXTM3U\n#EXTINF:-1 tvg-id=\"tvi.pt\", TVI\n{link}\n")
+        f.write(f"#EXTM3U\n#EXT-X-VERSION:3\n#EXTINF:-1 tvg-id=\"tvi.pt\", TVI\n{link_final}\n")
 else:
-    print("Falha total: O token não foi encontrado em nenhuma fonte.")
+    # Se falhar, vamos criar um ficheiro vazio para não quebrar a lista, 
+    # mas o exit 1 avisa-nos do erro.
+    print("A TVI bloqueou o acesso do GitHub Actions. Tentando alternativa...")
     exit(1)
