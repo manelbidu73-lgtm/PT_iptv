@@ -1,46 +1,63 @@
 import requests
-import json
+import re
+import time
 
-def extrair_tvi_oficial():
-    # Este é o endpoint da API interna que gera o link de stream
-    api_url = "https://iol.pt"
-    
+def extrair_blindado():
+    # 1. Configuração de "Disfarce" (Smart TV / Android TV)
+    # Este User-Agent e Referer fazem o servidor da TVI pensar que é uma App Oficial
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Linux; Android 10; SM-G973F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
-        'Accept': 'application/json, text/plain, */*',
+        'User-Agent': 'TVIPlayer/3.0.4 (Linux; Android 10; BRAVIA 4K VH2) AppleWebkit/537.36',
         'Referer': 'https://iol.pt',
-        'Origin': 'https://iol.pt'
+        'Origin': 'https://iol.pt',
+        'Accept': '*/*',
+        'X-Requested-With': 'com.iol.tviplayer'
     }
 
-    try:
-        print("A solicitar link à API de produção...")
-        # Fazemos o pedido à API
-        response = requests.get(api_url, headers=headers, timeout=15)
-        
-        # A API da IOL muitas vezes responde com o link direto ou um ficheiro de texto
-        txt = response.text
-        
-        # Se a resposta contiver o wmsAuthSign, isolamos o link
-        if "wmsAuthSign" in txt:
-            # Limpeza de caracteres que podem vir da API
-            link = txt.strip().replace('\\/', '/')
-            # Se o link vier entre aspas (JSON), limpamos
-            link = link.replace('"', '')
-            return link
+    # 2. Ordem de busca (Do mais direto para o backup)
+    fontes = [
+        "https://iol.pt",      # API Direta
+        "https://iol.ptdireto",           # Página Web
+        "https://m3upt.com",                # Proxy M3UPT
+        "https://githubusercontent.com" # Backup Final
+    ]
+
+    for url in fontes:
+        try:
+            print(f"A testar fonte: {url}")
+            # Timeout curto para não prender a Action se o IP do GitHub estiver bloqueado
+            response = requests.get(url, headers=headers, timeout=8)
             
-    except Exception as e:
-        print(f"Erro na API: {e}")
-    
+            if response.status_code == 200:
+                # Regex potente: procura URLs m3u8 que contenham o token wmsAuthSign
+                # Funciona mesmo se o link estiver escondido em JavaScript ou JSON
+                match = re.search(r'https?://[^\s<>"\']+\.m3u8\?wmsAuthSign=[^\s<>"\']+', response.text)
+                
+                if match:
+                    link = match.group(0).replace('\\/', '/') # Limpa barras de JSON
+                    print(f"✅ Token capturado via: {url}")
+                    return link
+        except Exception as e:
+            print(f"⚠️ Falha na fonte {url}: {e}")
+            continue # Tenta a próxima fonte
+            
     return None
 
-link_final = extrair_tvi_oficial()
+# Início do processo
+print("🚀 A iniciar extração blindada da TVI...")
+link_final = extrair_blindado()
 
 if link_final:
-    print(f"Link obtido com sucesso!")
+    # Gerar o ficheiro m3u8 com tags de alta compatibilidade
+    conteudo_final = (
+        "#EXTM3U\n"
+        "#EXT-X-VERSION:3\n"
+        "#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=3000000,RESOLUTION=1280x720\n"
+        f"{link_final}\n"
+    )
+    
     with open("tvi.m3u8", "w", encoding="utf-8") as f:
-        f.write(f"#EXTM3U\n#EXT-X-VERSION:3\n#EXTINF:-1 tvg-id=\"tvi.pt\", TVI\n{link_final}\n")
+        f.write(conteudo_final)
+    print("💎 Ficheiro tvi.m3u8 atualizado e pronto!")
 else:
-    # Se falhar, vamos criar um ficheiro vazio para não quebrar a lista, 
-    # mas o exit 1 avisa-nos do erro.
-    print("A TVI bloqueou o acesso do GitHub Actions. Tentando alternativa...")
+    print("❌ Erro: A TVI bloqueou todas as rotas. Verifique se o site está online.")
     exit(1)
