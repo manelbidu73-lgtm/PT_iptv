@@ -1,7 +1,7 @@
 name: Atualizar Canais
 on:
   schedule:
-    - cron: '0 * * * *' # Corre de hora a hora
+    - cron: '*/19 * * * *' # Corre de 19 em 19 minutos
   workflow_dispatch: # Permite correr manualmente
 
 jobs:
