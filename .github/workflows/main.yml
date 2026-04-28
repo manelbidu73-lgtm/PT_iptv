@@ -1,41 +1,35 @@
-name: UpdateTVI
+name: Atualizar Token TVI
 
 on:
   schedule:
-    - cron: '*/19 * * * *' # Atualiza automaticamente a cada 19 minutos
-  workflow_dispatch: # Permite-te atualizar manualmente clicando no botão
+    - cron: '0 */4 * * *' # Atualiza automaticamente de 4 em 4 horas
+  workflow_dispatch:      # Permite-te clicar no botão "Run workflow" para testar agora
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
-    # Dá permissão para o robô do GitHub alterar o teu ficheiro playlist.m3u
     permissions:
-      contents: write
+      contents: write     # Importante para permitir que a Action salve o ficheiro
       
     steps:
-      # 1. Descarrega o teu código para a máquina do GitHub
-      - name: Checkout do repositório
-        uses: actions/checkout@v3
+      - name: Checkout do código
+        uses: actions/checkout@v4
 
-      # 2. Instala o Python
-      - name: Configurar Python
-        uses: actions/setup-python@v4
+      - name: Configurar o Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.x'
 
-      # 3. Instala a biblioteca necessária para aceder a sites
       - name: Instalar dependências
         run: pip install requests
 
-      # 4. Executa o script que extrai o token da TVI
-      - name: Correr script de extração
+      - name: Executar o script de extração
         run: python extrair_link.py
 
-      # 5. Guarda as alterações no ficheiro playlist.m3u e envia para o GitHub
-      - name: Guardar e enviar novo token
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: "Token TVI atualizado automaticamente"
-          file_pattern: 'tvi.m3u8'
-          
+      - name: Guardar o ficheiro tvi.m3u8 no repositório
+        run: |
+          git config --local user.email "github-actions[bot]@://github.com"
+          git config --local user.name "github-actions[bot]"
+          git add tvi.m3u8
+          git commit -m "Auto: Token da TVI atualizado" || exit 0
+          git push
