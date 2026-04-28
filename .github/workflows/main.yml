@@ -1,0 +1,26 @@
+name: Atualizar Canais
+on:
+  schedule:
+    - cron: '0 * * * *' # Corre de hora a hora
+  workflow_dispatch: # Permite correr manualmente
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Instalar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Instalar Requests
+        run: pip install requests
+      - name: Executar Script
+        run: python extrair_link.py
+      - name: Guardar Alteracoes
+        run: |
+          git config --local user.email "github-actions[bot]@://github.com"
+          git config --local user.name "github-actions[bot]"
+          git add .
+          git commit -m "Link atualizado" || exit 0
+          git push
