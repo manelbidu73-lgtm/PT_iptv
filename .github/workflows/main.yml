@@ -1,18 +1,6 @@
 name: UpdateTVI
 on:
   schedule:
-    - cron: '*/19 * * *' # Corre de 3 em 3 horas
+    - cron: '*/19 * * * *' # O '*/19' diz ao GitHub para correr a cada 19 minutos
   workflow_dispatch:
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v3
-      - run: pip install requests
-      - run: python update_tvi.py
-      - uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: "Token novo"
-          
+# ... resto do código (jobs, steps, etc) mantém-se igual
