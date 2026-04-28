@@ -2,7 +2,7 @@ import requests
 import re
 
 def get_token():
-    url = "https://iol.pt"
+    url = "https://tviplayer.iol.pt/direto"
     h = {"User-Agent": "Mozilla/5.0"}
     try:
         r = requests.get(url, headers=h, timeout=10)
