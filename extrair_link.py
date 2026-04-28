@@ -1,63 +1,46 @@
 import requests
 import re
-import time
 
 def extrair_blindado():
-    # 1. Configuração de "Disfarce" (Smart TV / Android TV)
-    # Este User-Agent e Referer fazem o servidor da TVI pensar que é uma App Oficial
+    # Headers de Smart TV para evitar bloqueios
     headers = {
-        'User-Agent': 'TVIPlayer/3.0.4 (Linux; Android 10; BRAVIA 4K VH2) AppleWebkit/537.36',
-        'Referer': 'https://iol.pt',
-        'Origin': 'https://iol.pt',
-        'Accept': '*/*',
-        'X-Requested-With': 'com.iol.tviplayer'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Referer': 'https://iol.pt'
     }
 
-    # 2. Ordem de busca (Do mais direto para o backup)
+    # URLs COMPLETOS (Corrigidos para evitar NameResolutionError)
     fontes = [
-        "https://iol.pt",      # API Direta
-        "https://iol.ptdireto",           # Página Web
-        "https://m3upt.com",                # Proxy M3UPT
-        "https://githubusercontent.com" # Backup Final
+        "https://iol.pt",
+        "https://iol.ptdireto",
+        "https://githubusercontent.com" # Backup real
     ]
 
     for url in fontes:
         try:
             print(f"A testar fonte: {url}")
-            # Timeout curto para não prender a Action se o IP do GitHub estiver bloqueado
-            response = requests.get(url, headers=headers, timeout=8)
+            response = requests.get(url, headers=headers, timeout=15)
             
             if response.status_code == 200:
-                # Regex potente: procura URLs m3u8 que contenham o token wmsAuthSign
-                # Funciona mesmo se o link estiver escondido em JavaScript ou JSON
+                # Procura o link .m3u8 com o token wmsAuthSign
                 match = re.search(r'https?://[^\s<>"\']+\.m3u8\?wmsAuthSign=[^\s<>"\']+', response.text)
                 
                 if match:
-                    link = match.group(0).replace('\\/', '/') # Limpa barras de JSON
-                    print(f"✅ Token capturado via: {url}")
+                    link = match.group(0).replace('\\/', '/')
+                    print(f"✅ Sucesso via: {url}")
                     return link
         except Exception as e:
-            print(f"⚠️ Falha na fonte {url}: {e}")
-            continue # Tenta a próxima fonte
+            print(f"⚠️ Erro na fonte {url}: {e}")
             
     return None
 
-# Início do processo
-print("🚀 A iniciar extração blindada da TVI...")
+print("🚀 A iniciar extração final...")
 link_final = extrair_blindado()
 
 if link_final:
-    # Gerar o ficheiro m3u8 com tags de alta compatibilidade
-    conteudo_final = (
-        "#EXTM3U\n"
-        "#EXT-X-VERSION:3\n"
-        "#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=3000000,RESOLUTION=1280x720\n"
-        f"{link_final}\n"
-    )
-    
+    conteudo = f"#EXTM3U\n#EXT-X-VERSION:3\n#EXTINF:-1 tvg-id=\"tvi.pt\", TVI\n{link_final}\n"
     with open("tvi.m3u8", "w", encoding="utf-8") as f:
-        f.write(conteudo_final)
-    print("💎 Ficheiro tvi.m3u8 atualizado e pronto!")
+        f.write(conteudo)
+    print("💎 Ficheiro tvi.m3u8 atualizado!")
 else:
-    print("❌ Erro: A TVI bloqueou todas as rotas. Verifique se o site está online.")
+    print("❌ Falha: Nenhuma fonte respondeu com um token válido.")
     exit(1)
