@@ -2,54 +2,49 @@ import requests
 import re
 
 def extrair_link_tvi():
-    # URL da página oficial de direto
-    url_pagina = "https://iol.pt"
+    # URL principal que indicaste
+    url = "https://tviplayer.iol.pt/direto"
     
-    # Headers para simular um navegador real e evitar bloqueios
+    # Headers para parecer um acesso real de uma pessoa
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
-        'Referer': 'https://iol.pt'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Referer': 'https://tviplayer.iol.pt/',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8'
     }
     
     try:
-        # 1. Aceder à página para capturar o link do manifesto que contém o token
-        response = requests.get(url_pagina, headers=headers, timeout=15)
+        print(f"A aceder a: {url}")
+        response = requests.get(url, headers=headers, timeout=20)
+        response.raise_for_status()
         
-        # 2. Expressão regular para encontrar o link .m3u8 com o wmsAuthSign
-        # Este padrão procura o URL que a TVI usa no seu player dinâmico
+        # Expressão regular para capturar o link .m3u8 com o token wmsAuthSign
+        # Esta regex limpa também escapes comuns (como \/) que o site usa no código
         match = re.search(r'https?://[^\s<>"\']+\.m3u8\?wmsAuthSign=[^\s<>"\']+', response.text)
         
         if match:
-            return match.group(0)
-            
-        # 3. Caso falhe, tenta a API direta como plano B
-        api_fallback = requests.get("https://iol.pt", headers=headers, timeout=10)
-        match_fallback = re.search(r'https?://[^\s<>"\']+\.m3u8\?wmsAuthSign=[^\s<>"\']+', api_fallback.text)
-        
-        if match_fallback:
-            return match_fallback.group(0)
+            link_limpo = match.group(0).replace('\\/', '/')
+            return link_limpo
             
     except Exception as e:
-        print(f"Erro durante a extração: {e}")
-    
+        print(f"Erro ao processar a página: {e}")
+            
     return None
 
-# Execução do processo
-link_encontrado = extrair_link_tvi()
+# Processo de gravação
+link_final = extrair_link_tvi()
 
-if link_encontrado:
-    # Criar o conteúdo do ficheiro final com o nome exato tvi.m3u8
-    # Adicionamos tags básicas de IPTV para melhor compatibilidade
-    conteudo_m3u = (
+if link_final:
+    # Cria o ficheiro com o nome exato tvi.m3u8
+    conteudo_m3u8 = (
         "#EXTM3U\n"
-        "#EXTINF:-1 tvg-id=\"tvi.pt\" tvg-logo=\"https://m3upt.com\" group-title=\"Canais Portugueses\", TVI\n"
-        f"{link_encontrado}\n"
+        "#EXT-X-VERSION:3\n"
+        "#EXTINF:-1 tvg-id=\"tvi.pt\" tvg-logo=\"https://m3upt.com\", TVI\n"
+        f"{link_final}\n"
     )
     
     with open("tvi.m3u8", "w", encoding="utf-8") as f:
-        f.write(conteudo_m3u)
-    
-    print("Sucesso: Ficheiro tvi.m3u8 gerado com o novo token!")
+        f.write(conteudo_m3u8)
+    print(f"Sucesso! Link extraído: {link_final}")
 else:
-    print("Erro: Não foi possível capturar o token da TVI.")
-    exit(1) # Força a GitHub Action a mostrar erro se falhar
+    print("Erro: O token não foi encontrado na página da TVI.")
+    exit(1)
