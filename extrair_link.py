@@ -1,45 +1,42 @@
 import requests
-import re
 
-def obter_token():
-    # Headers para simular um navegador real
+def extrair_definitivo():
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Referer': 'https://iol.pt'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
     }
 
-    # Tentativa 1: API Direta da IOL
+    # Tentativa 1: API IOL (Original)
     try:
-        print("A testar Fonte 1 (API)...")
+        print("Tentando API IOL...")
         r = requests.get("https://iol.pt", headers=headers, timeout=10)
-        m = re.search(r'https?://[^\s<>"\']+\.m3u8\?wmsAuthSign=[^\s<>"\']+', r.text)
-        if m: return m.group(0).replace('\\/', '/')
-    except: print("Fonte 1 falhou.")
+        if "wmsAuthSign" in r.text:
+            link = r.text.strip().replace('"', '').replace('\\/', '/')
+            if link.startswith("http"): return link
+    except: pass
 
-    # Tentativa 2: Página de Direto
+    # Tentativa 2: Backup Direto da M3UPT (LITUATUI)
+    # Vamos descarregar o ficheiro que ele já validou
     try:
-        print("A testar Fonte 2 (Página)...")
-        r = requests.get("https://iol.ptdireto", headers=headers, timeout=10)
-        m = re.search(r'https?://[^\s<>"\']+\.m3u8\?wmsAuthSign=[^\s<>"\']+', r.text)
-        if m: return m.group(0).replace('\\/', '/')
-    except: print("Fonte 2 falhou.")
-
-    # Tentativa 3: Backup da Comunidade (M3UPT)
-    try:
-        print("A testar Fonte 3 (Backup M3UPT)...")
+        print("Tentando Backup M3UPT...")
         r = requests.get("https://githubusercontent.com", timeout=10)
-        m = re.search(r'https?://[^\s<>"\']+\.m3u8\?wmsAuthSign=[^\s<>"\']+', r.text)
-        if m: return m.group(0).replace('\\/', '/')
-    except: print("Fonte 3 falhou.")
+        lines = r.text.splitlines()
+        for line in lines:
+            if "wmsAuthSign" in line and line.startswith("http"):
+                return line.strip()
+    except: pass
 
     return None
 
-link = obter_token()
+link = extrair_definitivo()
 
 if link:
-    print(f"✅ Sucesso: {link}")
+    print(f"✅ Link encontrado!")
     with open("tvi.m3u8", "w", encoding="utf-8") as f:
-        f.write(f"#EXTM3U\n#EXTINF:-1 tvg-id=\"tvi.pt\", TVI\n{link}\n")
+        # Formato exato para listas IPTV
+        f.write("#EXTM3U\n")
+        f.write("#EXT-X-VERSION:3\n")
+        f.write("#EXTINF:-1 tvg-id=\"TVI\" tvg-logo=\"https://m3upt.com\", TVI\n")
+        f.write(f"{link}\n")
 else:
-    print("❌ Erro: Não foi possível obter o token em nenhuma fonte.")
+    print("❌ Falha crítica: Nenhuma fonte disponível.")
     exit(1)
