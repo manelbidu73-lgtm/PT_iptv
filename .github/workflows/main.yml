@@ -1,6 +1,41 @@
 name: UpdateTVI
+
 on:
   schedule:
-    - cron: '*/19 * * * *' # O '*/19' diz ao GitHub para correr a cada 19 minutos
-  workflow_dispatch:
-# ... resto do código (jobs, steps, etc) mantém-se igual
+    - cron: '*/19 * * * *' # Atualiza automaticamente a cada 19 minutos
+  workflow_dispatch: # Permite-te atualizar manualmente clicando no botão
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    # Dá permissão para o robô do GitHub alterar o teu ficheiro playlist.m3u
+    permissions:
+      contents: write
+      
+    steps:
+      # 1. Descarrega o teu código para a máquina do GitHub
+      - name: Checkout do repositório
+        uses: actions/checkout@v3
+
+      # 2. Instala o Python
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      # 3. Instala a biblioteca necessária para aceder a sites
+      - name: Instalar dependências
+        run: pip install requests
+
+      # 4. Executa o script que extrai o token da TVI
+      - name: Correr script de extração
+        run: python update_tvi.py
+
+      # 5. Guarda as alterações no ficheiro playlist.m3u e envia para o GitHub
+      - name: Guardar e enviar novo token
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Token TVI atualizado automaticamente"
+          file_pattern: 'TVI.m3u8'
+          
