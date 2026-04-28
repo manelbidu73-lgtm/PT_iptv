@@ -13,6 +13,6 @@ def get_token():
 
 link = get_token()
 if link:
-    with open("playlist.m3u", "w") as f:
+    with open("tvi.m3u8", "w") as f:
         f.write(f"#EXTM3U\n#EXTINF:-1, TVI\n{link}")
         
