@@ -1,26 +1,18 @@
-name: Atualizar Canais
+name: UpdateTVI
 on:
   schedule:
-    - cron: '*/19 * * * *' # Corre de 19 em 19 minutos
-  workflow_dispatch: # Permite correr manualmente
-
+    - cron: '*/19 * * *' # Corre de 3 em 3 horas
+  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v3
-      - name: Instalar Python
-        uses: actions/setup-python@v4
+      - run: pip install requests
+      - run: python update_tvi.py
+      - uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          python-version: '3.9'
-      - name: Instalar Requests
-        run: pip install requests
-      - name: Executar Script
-        run: python extrair_link.py
-      - name: Guardar Alteracoes
-        run: |
-          git config --local user.email "github-actions[bot]@://github.com"
-          git config --local user.name "github-actions[bot]"
-          git add .
-          git commit -m "Link atualizado" || exit 0
-          git push
+          commit_message: "Token novo"
+          
