@@ -2,7 +2,7 @@ name: Update SportTV Link
 on:
   workflow_dispatch:
   schedule:
-    - cron: '*19 * * * *' # Atualiza a cada 3 horas
+    - cron: '0,19,38,57 * * * *' # Atualiza a cada 3 horas
 
 jobs:
   scrape:
