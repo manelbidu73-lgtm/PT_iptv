@@ -1,35 +1,31 @@
-name: Atualizar Token TVI
-
+name: Update SportTV Link
 on:
+  workflow_dispatch:
   schedule:
-    - cron: '0 */4 * * *' # Atualiza automaticamente de 4 em 4 horas
-  workflow_dispatch:      # Permite-te clicar no botão "Run workflow" para testar agora
+    - cron: '*19 * * * *' # Atualiza a cada 3 horas
 
 jobs:
-  build:
+  scrape:
     runs-on: ubuntu-latest
     permissions:
-      contents: write     # Importante para permitir que a Action salve o ficheiro
-      
+      contents: write # Permissão para gravar no repo
     steps:
-      - name: Checkout do código
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      
+      - name: Setup Python e Playwright
+        run: |
+          pip install playwright
+          playwright install chromium
+          playwright install-deps chromium
 
-      - name: Configurar o Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-
-      - name: Instalar dependências
-        run: pip install requests
-
-      - name: Executar o script de extração
+      - name: Run Scraper
         run: python extrair_link.py
 
-      - name: Guardar o ficheiro tvi.m3u8 no repositório
+      - name: Commit changes
         run: |
-          git config --local user.email "github-actions[bot]@://github.com"
-          git config --local user.name "github-actions[bot]"
-          git add tvi.m3u8
-          git commit -m "Auto: Token da TVI atualizado" || exit 0
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add sporttv1.m3u8
+          git commit -m "Atualizado link SportTV 1" || exit 0
           git push
+          
