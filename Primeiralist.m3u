@@ -8,7 +8,7 @@ https://streaming-live.rtp.pt/liverepeater/smil:rtp2HD.smil/chunklist_b2540000_s
 #EXTINF:-1 tvg-id="SIC(src05).pt" tvg-logo="https://mage.stream.nos.pt/mage/v1/Images?sourceUri=http%3A%2F%2Fvip.repositories.local.internal%2FRepositories.EPG%2FOttChannelIcons%2FSICHD.png&profile=ott_16_220x64&client_id=xe1dgrShwdR1DVOKGmsj8Ut4QLlGyOFI&format=image/png.pt",SIC
 #EXTGRP:NOTÍCIAS
 https://d1zx6l1dn8vaj5.cloudfront.net/out/v1/b89cc37caa6d418eb423cf092a2ef970/index.m3u8
-#EXTINF:-1 tvg-id="TVI(src05).pt" tvg-logo="https://mage.stream.nos.pt/mage/v1/Images?sourceUri=http%3A%2F%2Fvip.repositories.local.internal%2FRepositories.EPG%2FOttChannelIcons%2FSICHD.png&profile=ott_16_220x64&client_id=xe1dgrShwdR1DVOKGmsj8Ut4QLlGyOFI&format=image/png.pt",SIC
+#EXTINF:-1 tvg-id="TVI(src05).pt" tvg-logo="https://mage.stream.nos.pt/mage/v1/Images?sourceUri=http%3A%2F%2Fvip.repositories.local.internal%2FRepositories.EPG%2FOttChannelIcons%2FSICHD.png&profile=ott_16_220x64&client_id=xe1dgrShwdR1DVOKGmsj8Ut4QLlGyOFI&format=image/png.pt",TVI
 #EXTGRP:NOTÍCIAS
 https://github.com/LITUATUI/M3UPT/raw/refs/heads/main/M3U/TVI.m3u
 #EXTINF:-1 tvg-id="SPORTTV1(src05).pt" tvg-logo="https://mage.stream.nos.pt/mage/v1/Images?sourceUri=http%3A%2F%2Fvip.repositories.local.internal%2FRepositories.EPG%2FOttChannelIcons%2FSPTV_1HD.png&profile=ott_16_220x64&client_id=xe1dgrShwdR1DVOKGmsj8Ut4QLlGyOFI&format=image/png.pt",SPORT TV 1
