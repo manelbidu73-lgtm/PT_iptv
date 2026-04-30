@@ -2,7 +2,7 @@ name: Update SportTV1 Link
 
 on:
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: "*/30 * * * *"
   workflow_dispatch:
 
 jobs:
@@ -16,23 +16,24 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: Instalar Requests
-        run: pip install requests
+      - name: Instalar Dependencias
+        run: |
+          pip install undetected-chromedriver requests
 
-      - name: Executar Extração
+      - name: Executar Extracao
         run: python extrair_link.py
 
-      - name: Push
+      - name: Git Push
         run: |
           git config --global user.name "IPTV Bot"
           git config --global user.email "bot@github.com"
           if [ -f sporttv1.m3u ]; then
             git add sporttv1.m3u
-            git commit -m "Update SportTV1 $(date +'%H:%M')" || echo "Sem mudanças"
+            git commit -m "Auto Update $(date +'%H:%M')" || echo "Sem mudanças"
             git push
           else
             exit 1
