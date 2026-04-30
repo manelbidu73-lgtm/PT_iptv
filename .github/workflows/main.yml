@@ -1,31 +1,36 @@
-name: Update SportTV Link
+name: Update SportTV1 Link
+
 on:
-  workflow_dispatch:
   schedule:
-    - cron: '0,19,38,57 * * * *' # Atualiza a cada 3 horas
+    # */30 significa "a cada 30 minutos"
+    - cron: "*/30 * * * *"
+  workflow_dispatch: # Mantém isto para poderes testar manualmente sempre que quiseres
 
 jobs:
-  scrape:
+  update_link:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Permissão para gravar no repo
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Python e Playwright
-        run: |
-          pip install playwright
-          playwright install chromium
-          playwright install-deps chromium
+      contents: write
 
-      - name: Run Scraper
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run script
         run: python extrair_link.py
 
-      - name: Commit changes
+      - name: Commit and Push changes
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add sporttv1.m3u8
-          git commit -m "Atualizado link SportTV 1" || exit 0
-          git push
-          
+          git config --global user.name "GitHub Action Bot"
+          git config --global user.email "actions@github.com"
+          git add sporttv1.m3u
+          # O commit só acontece se o ficheiro tiver mudado (token novo)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update SportTV1: $(date +'%Y-%m-%d %H:%M')" && git push)
