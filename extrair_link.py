@@ -1,6 +1,6 @@
-import os
 import re
 import time
+import sys
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
@@ -14,46 +14,50 @@ def extrair():
     chrome_options.add_argument("--disable-dev-shm-usage")
     
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
-    
+    link_m3u8 = None
+
     try:
         print("A carregar Megatuga...")
         driver.get("https://megatuga.io/canais-de-desporto")
-        
-        # 1. Espera a página carregar os ícones
-        time.sleep(8)
-        
-        # 2. Tenta clicar no botão da Sport TV 1 para forçar o carregamento do link
-        # Geralmente os canais têm um ID ou um texto. Vamos procurar pelo nome.
-        try:
-            botao_canal = driver.find_element(By.XPATH, "//*[contains(text(), 'Sport TV 1')]")
-            driver.execute_script("arguments[0].click();", botao_canal)
-            print("Clique na Sport TV 1 efetuado. A aguardar token...")
-            time.sleep(5) # Espera o player gerar o link
-        except:
-            print("Aviso: Não foi possível clicar no botão, a tentar extração direta...")
+        time.sleep(10)
 
-        # 3. Varre o código fonte atualizado (DOM)
-        html_final = driver.page_source
+        # Tenta clicar no canal Sport TV 1
+        try:
+            canais = driver.find_elements(By.XPATH, "//*[contains(text(), 'Sport TV 1')]")
+            if canais:
+                driver.execute_script("arguments[0].click();", canais[0])
+                print("Clique efetuado. A aguardar carregamento do player...")
+                time.sleep(10)
+        except Exception as e:
+            print(f"Não foi possível clicar: {e}")
+
+        # Procura em todos os frames da página
+        iframes = driver.find_elements(By.TAG_NAME, "iframe")
+        print(f"Encontrados {len(iframes)} iframes. A analisar...")
+
+        # Procura o link no HTML principal
+        html_source = driver.page_source
+        links = re.findall(r'https?://[^\s"\']+\.m3u8\?[^\s"\']+', html_source.replace('\\/', '/'))
         
-        # Regex potente para pegar o link m3u8 com token
-        links = re.findall(r'https?://[^\s"\']+\.m3u8\?[^\s"\']+', html_final.replace('\\/', '/'))
-        
+        # Se não achou no principal, entra em cada iframe
+        if not links:
+            for index, iframe in enumerate(iframes):
+                try:
+                    driver.switch_to.frame(iframe)
+                    links += re.findall(r'https?://[^\s"\']+\.m3u8\?[^\s"\']+', driver.page_source.replace('\\/', '/'))
+                    driver.switch_to.default_content()
+                except:
+                    continue
+
         if links:
-            # Filtra links conhecidos de publicidade, se houver
             link_m3u8 = links[0]
-            
-            conteudo_m3u = (
-                "#EXTM3U\n"
-                "#EXTINF:-1 tvg-id=\"SportTV1\" tvg-logo=\"https://wikimedia.org\",SPORT TV 1\n"
-                f"{link_m3u8}"
-            )
-            
             with open("sporttv1.m3u", "w", encoding="utf-8") as f:
-                f.write(conteudo_m3u)
-            print(f"Sucesso! Link M3U8 capturado.")
+                f.write(f"#EXTM3U\n#EXTINF:-1 tvg-id=\"SportTV1\" tvg-logo=\"https://wikimedia.org\",SPORT TV 1\n{link_m3u8}")
+            print(f"Sucesso! Link guardado: {link_m3u8[:50]}...")
         else:
-            print("Erro: Link não encontrado após o clique.")
-            
+            print("Link não encontrado em nenhum frame.")
+            sys.exit(1)
+
     finally:
         driver.quit()
 
