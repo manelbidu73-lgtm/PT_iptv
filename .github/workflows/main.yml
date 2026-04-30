@@ -2,7 +2,7 @@ name: Update SportTV1 Link
 
 on:
   schedule:
-    - cron: "*/30 * * * *"
+    - cron: "*/15 * * * *"
   workflow_dispatch:
 
 jobs:
