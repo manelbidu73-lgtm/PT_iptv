@@ -3,7 +3,7 @@ import re
 import sys
 
 def extrair():
-    url_fonte = "https://sportssonline.click"
+    url_fonte = "https://v3.sportssonline.click/channels/pt/sporttv1.php"
     
     # Simula um iPhone para o site entregar o link mais facilmente
     headers = {
