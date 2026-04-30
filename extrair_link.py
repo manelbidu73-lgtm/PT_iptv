@@ -1,61 +1,70 @@
 import time
 import sys
+import requests
 import re
-import undetected_chromedriver as uc
-from selenium.webdriver.common.by import By
+from seleniumwire import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+
+def buscar_proxy_gratis():
+    print("A procurar proxy funcional...")
+    try:
+        # Vai buscar uma lista de proxies gratuitos
+        response = requests.get("https://proxyscrape.com")
+        proxies = response.text.splitlines()
+        if proxies:
+            return proxies[0] # Retorna o primeiro da lista
+    except:
+        return None
+    return None
 
 def extrair():
-    options = uc.ChromeOptions()
-    # NÃO usar o modo headless tradicional, pois é facilmente detetado
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--window-size=1920,1080")
+    proxy = buscar_proxy_gratis()
     
-    # Inicia o browser "indetetável"
-    driver = uc.Chrome(options=options)
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
     
+    proxy_options = {}
+    if proxy:
+        print(f"A usar proxy: {proxy}")
+        proxy_options = {
+            'proxy': {
+                'http': f'http://{proxy}',
+                'https': f'http://{proxy}',
+                'no_proxy': 'localhost,127.0.0.1'
+            }
+        }
+
+    driver = webdriver.Chrome(
+        service=Service(ChromeDriverManager().install()),
+        options=chrome_options,
+        seleniumwire_options=proxy_options
+    )
+
     try:
-        print("A aceder ao player direto...")
+        driver.set_page_load_timeout(60)
+        print("A abrir o site Sportssonline...")
         driver.get("https://v3.sportssonline.click/channels/pt/sporttv1.php")
         
-        # Espera longa para o bypass da Cloudflare e carregamento do player
-        time.sleep(25)
+        time.sleep(30) # Tempo para o player carregar via proxy
 
-        # 1. Tenta clicar no centro do ecrã para ativar o stream
-        try:
-            driver.find_element(By.TAG_NAME, "body").click()
-            print("Clique de ativação efetuado.")
-            time.sleep(10)
-        except:
-            pass
+        link_m3u8 = None
+        for request in driver.requests:
+            if request.response:
+                url = request.url
+                if '.m3u8' in url and not any(x in url for x in ['google', 'ads']):
+                    link_m3u8 = url
+                    break
 
-        # 2. Varre o código de todos os frames à procura do m3u8
-        html_total = driver.page_source
-        iframes = driver.find_elements(By.TAG_NAME, "iframe")
-        
-        for index, iframe in enumerate(iframes):
-            try:
-                driver.switch_to.frame(iframe)
-                html_total += driver.page_source
-                driver.switch_to.default_content()
-            except:
-                continue
-
-        # Regex para capturar o link com o token
-        # Procura por padrões comuns como playlist.m3u8?token= ou similar
-        links = re.findall(r'https?://[^\s"\']+\.m3u8\?[^\s"\']+', html_total.replace('\\/', '/'))
-
-        if links:
-            # Filtra para evitar links de publicidade
-            link_final = [l for l in links if "google" not in l and "ads" not in l]
-            
-            conteudo = f"#EXTM3U\n#EXTINF:-1 tvg-id=\"SportTV1\" tvg-logo=\"https://wikimedia.org\",SPORT TV 1\n{link_final}"
-            
+        if link_m3u8:
             with open("sporttv1.m3u", "w", encoding="utf-8") as f:
-                f.write(conteudo)
-            print(f"SUCESSO! Link extraído.")
+                f.write(f"#EXTM3U\n#EXTINF:-1,Sport TV 1\n{link_m3u8}")
+            print("SUCESSO!")
         else:
-            print("ERRO: Link não encontrado. O site pode estar a bloquear o IP do GitHub.")
+            print("FALHA: Proxy bloqueado ou link não encontrado.")
             sys.exit(1)
 
     finally:
