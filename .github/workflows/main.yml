@@ -2,9 +2,8 @@ name: Update SportTV1 Link
 
 on:
   schedule:
-    # Executa a cada 30 minutos
     - cron: "*/30 * * * *"
-  workflow_dispatch: # Permite execução manual para testes
+  workflow_dispatch:
 
 jobs:
   build:
@@ -21,24 +20,20 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Instalar Dependências do Selenium
+      - name: Instalar Dependências
         run: |
-          pip install selenium webdriver-manager requests
+          pip install selenium-wire webdriver-manager blinker==1.7.0
 
-      - name: Executar Extração (Selenium)
+      - name: Executar Extração (Network Sniffer)
         run: python extrair_link.py
 
-      - name: Publicar Alterações no Repositório
+      - name: Publicar Alterações
         run: |
           git config --global user.name "Megatuga Bot"
           git config --global user.email "bot@github.com"
-          
-          # Verifica se o ficheiro foi criado antes de tentar o commit
           if [ -f sporttv1.m3u ]; then
             git add sporttv1.m3u
-            # Só faz commit se houver mudanças reais no conteúdo (token novo)
-            git diff --quiet && git diff --staged --quiet || (git commit -m "Update SportTV1: $(date +'%Y-%m-%d %H:%M')" && git push)
+            git diff --quiet && git diff --staged --quiet || (git commit -m "Update SportTV1: $(date +'%H:%M')" && git push)
           else
-            echo "Erro: O ficheiro sporttv1.m3u não foi encontrado. O script falhou a extração."
             exit 1
           fi
