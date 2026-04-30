@@ -12,10 +12,10 @@ jobs:
       contents: write
 
     steps:
-      - name: Checkout do código
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Configurar Python
+      - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
@@ -24,16 +24,18 @@ jobs:
         run: |
           pip install selenium-wire webdriver-manager blinker==1.7.0
 
-      - name: Executar Extração (Network Sniffer)
+      - name: Executar Script
         run: python extrair_link.py
 
-      - name: Publicar Alterações
+      - name: Git Push
         run: |
-          git config --global user.name "Megatuga Bot"
+          git config --global user.name "Sports Bot"
           git config --global user.email "bot@github.com"
           if [ -f sporttv1.m3u ]; then
             git add sporttv1.m3u
-            git diff --quiet && git diff --staged --quiet || (git commit -m "Update SportTV1: $(date +'%H:%M')" && git push)
+            git commit -m "Auto Update $(date +'%H:%M')" || echo "Sem mudanças"
+            git push
           else
+            echo "Ficheiro não gerado."
             exit 1
           fi
