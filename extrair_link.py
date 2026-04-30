@@ -35,13 +35,15 @@ def extrair():
             link_direto = links[0] # Pega o primeiro link encontrado
             
             # Criar o ficheiro M3U
-            conteudo = (
-                "#EXTM3U\n"
-                "#EXTINF:-1 tvg-id=\"SportTV1\" tvg-logo=\"https://wikimedia.org\",SPORT TV 1\n"
-                f"{link_direto}"
-            )
-            
-            with open("sporttv1.m3u", "w", encoding="utf-8") as f:
+           # Procura a parte do "with open" no teu extrair_link.py e substitui por isto:
+m3u_content = (
+    "#EXTM3U\n"
+    f"#EXTINF:-1 tvg-id=\"SportTV1\" tvg-logo=\"https://wikimedia.org\",SPORT TV 1\n"
+    f"#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36\n"
+    f"#EXTVLCOPT:http-referrer=https://sportssonline.click\n"
+    f"{links[0]}|User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36&Referer=https://sportssonline.click"
+)
+             with open("sporttv1.m3u", "w", encoding="utf-8") as f:
                 f.write(conteudo)
             print(f"Sucesso! Link capturado: {link_direto[:60]}...")
         else:
