@@ -20,7 +20,22 @@ def extrair():
         print("A abrir o site...")
         driver.get("https://v3.sportssonline.click/channels/pt/sporttv1.php")
         time.sleep(30)
+ print("A abrir o Megatuga...")
+        driver.get("https://megatuga.io") # Página onde estão os botões
+        time.sleep(10)
 
+        # Procura o botão da Sport TV 1 e clica nele
+        try:
+            print("A selecionar Sport TV 1...")
+            # Procura por um elemento que contenha o texto 'Sport TV 1' e clica
+            botao = driver.find_element("xpath", "//*[contains(text(), 'Sport TV 1')]")
+            driver.execute_script("arguments[0].click();", botao)
+            print("Clique efetuado!")
+        except Exception as e:
+            print(f"Aviso: Não foi possível clicar no botão (talvez já esteja no canal). Erro: {e}")
+
+        print("A aguardar 40 segundos para o player disparar o link na rede...")
+        time.sleep(40) # O Megatuga é lento a carregar o player real
         # 1. Capturar o link da rede
         for request in driver.requests:
             if request.response:
