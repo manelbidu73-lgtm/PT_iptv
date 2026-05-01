@@ -7,9 +7,7 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
 def extrair():
-    print("A iniciar o processo...") # Isto TEM de aparecer no log
     link_m3u8 = None 
-    
     chrome_options = Options()
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--no-sandbox")
@@ -19,40 +17,36 @@ def extrair():
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 
     try:
-        print("A abrir o site Sportssonline...")
+        print("A abrir o site...")
         driver.get("https://v3.sportssonline.click/channels/pt/sporttv1.php")
-        
-        print("A aguardar 30 segundos para capturar rede...")
         time.sleep(30)
 
-        # Contador para sabermos quantos pedidos o sniffer viu
-        pedidos_vistos = 0
+        # 1. Capturar o link da rede
         for request in driver.requests:
-            pedidos_vistos += 1
-            url = request.url
-            if '.m3u8?s=' in url and '&e=' in url:
-                link_m3u8 = url
-                break
+            if request.response:
+                url = request.url
+                if '.m3u8?s=' in url and '&e=' in url:
+                    link_m3u8 = url
+                    break
 
-        print(f"Analisados {pedidos_vistos} pedidos de rede.")
-
+        # 2. Criar o ficheiro se encontrar o link
         if link_m3u8:
-            print(f"SUCESSO: Link encontrado!")
-         # Formato otimizado para VLC e outras Apps
-m3u_content = (
-    "#EXTM3U\n"
-    f"#EXTINF:-1 tvg-id=\"SportTV1\" tvg-logo=\"https://wikimedia.org\",SPORT TV 1\n"
-    f"#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36\n"
-    f"#EXTVLCOPT:http-referrer=https://sportssonline.click\n"
-    f"{link_m3u8}|User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36&Referer=https://sportssonline.click"
-)
-      else:
-            print("AVISO: O link nao foi encontrado na rede desta vez.")
-            # Se não encontrar, forçamos o erro para o círculo ficar vermelho e sabermos
+            print(f"Sucesso! Link capturado.")
+            m3u_content = (
+                "#EXTM3U\n"
+                "#EXTINF:-1 tvg-id=\"SportTV1\" tvg-logo=\"https://wikimedia.org\",SPORT TV 1\n"
+                "#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36\n"
+                "#EXTVLCOPT:http-referrer=https://sportssonline.click\n"
+                f"{link_m3u8}|User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36&Referer=https://sportssonline.click"
+            )
+            with open("sporttv1.m3u", "w", encoding="utf-8") as f:
+                f.write(m3u_content)
+        else:
+            print("Erro: Link nao encontrado.")
             sys.exit(1)
 
     except Exception as e:
-        print(f"ERRO CRITICO: {e}")
+        print(f"Erro critico: {e}")
         sys.exit(1)
     finally:
         driver.quit()
