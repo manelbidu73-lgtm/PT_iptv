@@ -1,10 +1,10 @@
 import time
 import sys
-import re
 from seleniumwire import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
 
 def extrair():
     link_m3u8 = None 
@@ -17,49 +17,49 @@ def extrair():
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 
     try:
-        print("A abrir o Megatuga...")
-        driver.get("https://megatuga.io/canais-de-desporto") 
-        time.sleep(15) # Aumentei um pouco para garantir o carregamento
+        print("A abrir Megatuga Desporto...")
+        driver.get("https://megatuga.io/canais-de-desporto")
+        time.sleep(15)
 
-        # Procura o botão da Sport TV 1 e clica nele
+        # 1. Tentar encontrar e clicar no botão Sport TV 1
+        print("A procurar botão da Sport TV 1...")
         try:
-            print("A selecionar Sport TV 1...")
-            # XPATH melhorado para encontrar o link exato
-            botao = driver.find_element("xpath", "//a[contains(., 'Sport TV 1')]")
+            # Tenta clicar no elemento que contém o texto
+            botao = driver.find_element(By.XPATH, "//a[contains(., 'Sport TV 1')]")
             driver.execute_script("arguments[0].click();", botao)
-            print("Clique efetuado!")
-        except Exception as e:
-            print(f"Aviso: Nao foi possivel clicar. Erro: {e}")
+            print("Clique no canal efetuado.")
+            time.sleep(10)
+        except:
+            print("Aviso: Botão não encontrado ou já clicado.")
 
-        print("A aguardar 40 segundos para o player disparar o link na rede...")
+        # 2. MÉTODO DO DOWNLOAD HELPER: Monitorizar a rede
+        print("A aguardar 40 segundos para capturar o link m3u8...")
         time.sleep(40) 
 
-        # 1. Capturar o link da rede (procuramos m3u8 genérico já que o site mudou)
         for request in driver.requests:
-            if request.response:
-                url = request.url
-                # No Megatuga o padrão pode ser diferente, vamos procurar apenas .m3u8
-                if '.m3u8' in url and 'ads' not in url:
-                    link_m3u8 = url
-                    break
+            url = request.url
+            # Procura exatamente o padrão do link que mandaste
+            if '.m3u8?s=' in url and '&e=' in url:
+                link_m3u8 = url
+                break
 
-        # 2. Criar o ficheiro se encontrar o link
         if link_m3u8:
-            print(f"Sucesso! Link capturado.")
+            print(f"SUCESSO! Link capturado.")
+            # Criar o M3U com Referer do Megatuga
             m3u_content = (
                 "#EXTM3U\n"
                 "#EXTINF:-1 tvg-id=\"SportTV1\",SPORT TV 1\n"
-                "#EXTVLCOPT:http-referrer=https://megatuga.io/\n"
-                f"{link_m3u8}|User-Agent=Mozilla/5.0&Referer=https://megatuga.io/"
+                "#EXTVLCOPT:http-referrer=https://megatuga.io\n"
+                f"{link_m3u8}|User-Agent=Mozilla/5.0&Referer=https://megatuga.io"
             )
             with open("sporttv1.m3u", "w", encoding="utf-8") as f:
                 f.write(m3u_content)
         else:
-            print("Erro: Link nao encontrado na rede.")
+            print("ERRO: O link não passou pela rede. O player pode estar bloqueado.")
             sys.exit(1)
 
     except Exception as e:
-        print(f"Erro critico: {e}")
+        print(f"Erro: {e}")
         sys.exit(1)
     finally:
         driver.quit()
