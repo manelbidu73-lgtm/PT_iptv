@@ -11,6 +11,16 @@ def extrair():
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
 
+        # Configuração de Proxy para tentar IP de Portugal ou Europa
+    # Nota: Proxies grátis falham muito. Se der erro, corre o workflow outra vez.
+    proxy_options = {
+        'proxy': {
+            'http': 'http://188.93.228.41:80', # Exemplo de IP europeu, podes trocar se falhar
+            'https': 'https://188.93.228.41:80',
+            'no_proxy': 'localhost,127.0.0.1'
+        }
+    }
+
     # Inicia o browser com monitorização de rede
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
     link_m3u8 = None
