@@ -2,8 +2,8 @@ name: Update SportTV1 Link
 
 on:
   schedule:
-    - cron: "*/20 * * * *"
-  workflow_dispatch:
+    - cron: "*/30 * * * *" # Corre a cada 30 minutos
+  workflow_dispatch: # Permite correr manualmente
 
 jobs:
   build:
@@ -12,7 +12,7 @@ jobs:
       contents: write
 
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Setup Python
@@ -20,19 +20,21 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Instalar Dependências
+      - name: Instalar Chrome, XVFB e Dependências
         run: |
-          pip install selenium-wire webdriver-manager blinker==1.7.0
+          sudo apt-get update
+          sudo apt-get install -y xvfb
+          pip install undetected-chromedriver selenium-wire webdriver-manager blinker==1.7.0 requests
 
-      - name: Executar Extração (Network Sniffer)
-        run: python extrair_link.py
+      - name: Executar Extração com Ecrã Virtual
+        # O xvfb-run cria um monitor virtual para o Chrome poder abrir
+        run: xvfb-run --auto-servernum python extrair_link.py
 
-      - name: Publicar Alterações
+      - name: Publicar Alterações no GitHub
         run: |
           git config --global user.name "IPTV Bot"
           git config --global user.email "bot@github.com"
           git add sporttv1.m3u
-          # Removemos a verificação de mudanças para ele forçar o commit
-          git commit -m "Auto Update: $(date +'%H:%M')"
+          # O commit só acontece se o ficheiro tiver mudado
+          git commit -m "Auto Update: $(date +'%H:%M')" || echo "Sem alterações para publicar"
           git push
-
