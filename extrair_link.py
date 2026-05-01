@@ -25,46 +25,31 @@ def extrair():
         }
     }
 
-    # Inicia o browser com monitorização de rede
-        # Adicionamos seleniumwire_options=proxy_options
-    driver = webdriver.Chrome(
-        service=Service(ChromeDriverManager().install()), 
-        options=chrome_options,
-        seleniumwire_options=proxy_options
-    )
-
     try:
-        print("A abrir o site e a monitorizar a rede (Igual ao DownloadHelper)...")
         driver.get("https://v3.sportssonline.click/channels/pt/sporttv1.php")
-        
-        # Espera 30 segundos para o player carregar e o link aparecer na rede
         time.sleep(30)
 
-        # Analisa todos os pedidos de rede que o browser fez
         for request in driver.requests:
             if request.response:
                 url = request.url
-                # Procura o link com o padrão que me mandaste (s= e e=)
                 if '.m3u8?s=' in url and '&e=' in url:
                     link_m3u8 = url
                     break
 
+        # 2. Só tenta gravar o ficheiro se o link foi realmente encontrado
         if link_m3u8:
-            print(f"Sucesso! Link capturado da rede.")
-            # O "|" ajuda o teu player a passar as proteções 403
-            m3u_content = (
-                "#EXTM3U\n"
-                f"#EXTINF:-1 tvg-id=\"SportTV1\" tvg-logo=\"https://wikimedia.org\",SPORT TV 1\n"
-                f"{link_m3u8}|User-Agent=Mozilla/5.0&Referer=https://sportssonline.click"
-            )
+            print(f"Sucesso! Link capturado.")
+            m3u_content = f"#EXTM3U\n#EXTINF:-1 tvg-id=\"SportTV1\",SPORT TV 1\n{link_m3u8}|User-Agent=Mozilla/5.0&Referer=https://sportssonline.click"
             with open("sporttv1.m3u", "w", encoding="utf-8") as f:
                 f.write(m3u_content)
         else:
-            print("Erro: O link não passou pela rede. O vídeo pode não ter iniciado.")
-            sys.exit(1)
+            print("Erro: O link nao foi detetado na rede.")
+            sys.exit(1) # Força o erro para tu saberes que falhou a captura
 
     finally:
         driver.quit()
 
-if __name__ == "__main__":
+
+
+
     extrair()
