@@ -2,8 +2,8 @@ name: Update SportTV1 Link
 
 on:
   schedule:
-    - cron: "*/30 * * * *"
-  workflow_dispatch:
+    - cron: "*/30 * * * *" # Atualiza a cada 30 minutos
+  workflow_dispatch: # Permite-te carregar no botão para testar
 
 jobs:
   build:
@@ -12,7 +12,7 @@ jobs:
       contents: write
 
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Setup Python
@@ -20,16 +20,19 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Instalar Requests
-        run: pip install requests
+      - name: Instalar Dependencias Selenium
+        run: |
+          pip install selenium-wire webdriver-manager blinker==1.7.0 requests
 
-      - name: Executar Extração
+      - name: Executar Extracao
+        # O Selenium corre em modo headless (sem janela) no servidor
         run: python extrair_link.py
 
-      - name: Publicar
+      - name: Publicar Alteracoes
         run: |
           git config --global user.name "IPTV Bot"
           git config --global user.email "bot@github.com"
           git add sporttv1.m3u
-          git commit -m "Auto Update $(date +'%H:%M')" || echo "Sem mudanças"
+          # Só faz commit se o ficheiro tiver mudado
+          git commit -m "Auto Update: $(date +'%H:%M')" || echo "Sem alterações"
           git push
