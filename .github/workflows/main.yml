@@ -27,14 +27,12 @@ jobs:
       - name: Executar Extração (Network Sniffer)
         run: python extrair_link.py
 
-      - name: Publicar
+      - name: Publicar Alterações
         run: |
           git config --global user.name "IPTV Bot"
           git config --global user.email "bot@github.com"
-          if [ -f sporttv1.m3u ]; then
-            git add sporttv1.m3u
-            git commit -m "Auto Update" || echo "Sem mudanças"
-            git push
-          else
-            exit 1
-          fi
+          git add sporttv1.m3u
+          # Removemos a verificação de mudanças para ele forçar o commit
+          git commit -m "Auto Update: $(date +'%H:%M')"
+          git push
+
