@@ -47,10 +47,11 @@ def extrair():
             print(f"Sucesso! Link capturado.")
             m3u_content = (
                 "#EXTM3U\n"
-                "#EXTINF:-1 tvg-id=\"SportTV1\" tvg-logo=\"https://wikimedia.org\",SPORT TV 1\n"
-                "#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36\n"
-                "#EXTVLCOPT:http-referrer=https://sportssonline.click\n"
-                f"{link_m3u8}|User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36&Referer=https://sportssonline.click"
+                "#EXTINF:-1 tvg-id=\"SportTV1\",SPORT TV 1\n"
+                "#EXTVLCOPT:http-referrer=https://megatuga.io\n"
+                f"{link_m3u8}|User-Agent=Mozilla/5.0&Referer=https://megatuga.io"
+            )
+
             )
             with open("sporttv1.m3u", "w", encoding="utf-8") as f:
                 f.write(m3u_content)
