@@ -8,6 +8,7 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
 def extrair():
+    link_m3u8 = None 
     chrome_options = Options()
     chrome_options.add_argument("--headless") # Roda em segundo plano
     chrome_options.add_argument("--no-sandbox")
