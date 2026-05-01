@@ -20,7 +20,7 @@ def extrair():
 
     try:
         print("A abrir o site Sportssonline...")
-        driver.get("https://sportssonline.click")
+        driver.get("https://v3.sportssonline.click/channels/pt/sporttv1.php")
         
         print("A aguardar 30 segundos para capturar rede...")
         time.sleep(30)
