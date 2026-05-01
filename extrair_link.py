@@ -17,11 +17,9 @@ def extrair():
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 
     try:
-        print("A abrir o site...")
-        driver.get("https://v3.sportssonline.click/channels/pt/sporttv1.php")
-        time.sleep(30)
- print("A abrir o Megatuga...")
-        driver.get("https://megatuga.io") # Página onde estão os botões
+        
+        print("A abrir o Megatuga...")
+        driver.get("https://megatuga.io/canais-de-desporto") # Página onde estão os botões
         time.sleep(10)
 
         # Procura o botão da Sport TV 1 e clica nele
