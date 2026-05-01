@@ -2,7 +2,7 @@ name: Update SportTV1 Link
 
 on:
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: "*/20 * * * *"
   workflow_dispatch:
 
 jobs:
@@ -20,14 +20,13 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Instalar Dependencias
-        run: |
-          pip install undetected-chromedriver requests
+      - name: Instalar Requests
+        run: pip install requests
 
-      - name: Executar Extracao
+      - name: Executar Extração
         run: python extrair_link.py
 
-      - name: Git Push
+      - name: Publicar Alterações
         run: |
           git config --global user.name "IPTV Bot"
           git config --global user.email "bot@github.com"
