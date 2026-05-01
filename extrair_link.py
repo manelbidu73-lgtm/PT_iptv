@@ -18,31 +18,35 @@ def extrair():
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 
     try:
-        print("A abrir o Megatuga (Canais de Desporto)...")
+        print("A abrir Megatuga...")
         driver.get("https://megatuga.io")
-        time.sleep(15)
+        time.sleep(20)
 
-        # MÉTODO DE CLIQUE MELHORADO
-        print("A procurar e clicar no canal Sport TV 1...")
-        try:
-            # Procura qualquer link que contenha 'sport-tv-1' no endereço ou texto
-            canais = driver.find_elements(By.XPATH, "//a[contains(@href, 'sport-tv-1') or contains(., 'Sport TV 1')]")
-            if canais:
-                # Clica no primeiro que encontrar
-                driver.execute_script("arguments[0].click();", canais[0])
-                print("Clique no canal efetuado com sucesso!")
-            else:
-                print("Aviso: Botão do canal não encontrado. A tentar clique por coordenadas...")
-                from selenium.webdriver.common.action_chains import ActionChains
-                actions = ActionChains(driver)
-                actions.move_by_offset(200, 400).click().perform() # Clica onde o 1º canal costuma estar
-        except Exception as e:
-            print(f"Erro ao tentar clicar: {e}")
+        # MÉTODO 1: Procurar todos os links e clicar no que parece ser a Sport TV 1
+        print("A varrer a página à procura do canal...")
+        clicou = False
+        links = driver.find_elements(By.TAG_NAME, "a")
+        for link in links:
+            texto = link.text.lower()
+            href = link.get_attribute("href").lower() if link.get_attribute("href") else ""
+            
+            if ("sport" in texto and "1" in texto) or ("sport-tv-1" in href):
+                print(f"Canal encontrado! Texto: {texto} | Link: {href}")
+                driver.execute_script("arguments[0].scrollIntoView();", link)
+                driver.execute_script("arguments[0].click();", link)
+                clicou = True
+                break
 
-        print("A aguardar 45 segundos para o stream disparar na rede...")
-        time.sleep(45)
+        if not clicou:
+            print("Aviso: Não encontrei o link pelo texto. A tentar clique forçado no topo da lista...")
+            driver.execute_script("window.scrollTo(0, 500);")
+            from selenium.webdriver.common.action_chains import ActionChains
+            ActionChains(driver).move_by_offset(300, 500).click().perform()
 
-        # Capturar o link da rede
+        print("A aguardar 50 segundos para o sinal disparar...")
+        time.sleep(50)
+
+        # Capturar o link da rede (m3u8 com s= e e=)
         for request in driver.requests:
             url = request.url
             if '.m3u8?s=' in url and '&e=' in url:
@@ -50,16 +54,16 @@ def extrair():
                 break
 
         if link_m3u8:
-            print("SUCESSO! Link capturado.")
+            print(f"SUCESSO! Link pescado: {link_m3u8[:60]}...")
             m3u_content = (
                 "#EXTM3U\n"
                 "#EXTINF:-1 tvg-id=\"SportTV1\",SPORT TV 1\n"
-                f"{link_m3u8}|User-Agent=Mozilla/5.0&Referer=https://megatuga.io/"
+                f"{link_m3u8}|User-Agent=Mozilla/5.0&Referer=https://megatuga.io"
             )
             with open("sporttv1.m3u", "w", encoding="utf-8") as f:
                 f.write(m3u_content)
         else:
-            print("ERRO: O player não disparou o link. O site pode estar a bloquear o IP do GitHub.")
+            print("ERRO: O link m3u8 não apareceu na rede. O IP do GitHub pode estar bloqueado.")
             sys.exit(1)
 
     finally:
