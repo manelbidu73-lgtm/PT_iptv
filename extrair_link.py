@@ -1,51 +1,52 @@
+import requests
+import re
 import sys
-import os
-from seleniumbase import SB
 
 def extrair():
-    link_m3u8 = None
-    # Adicionamos wire=True para o SeleniumBase ativar o monitor de rede
-    with SB(uc=True, xvfb=True, wire=True) as sb:
-        try:
-            print("A abrir Megatuga...")
-            sb.open("https://megatuga.io/canais-de-desporto")
-            sb.sleep(15)
+    # Headers para parecer um utilizador real
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        'Referer': 'https://megatuga.io',
+        'Origin': 'https://megatuga.io'
+    }
 
-            print("A procurar e clicar na Sport TV 1...")
-            # Tenta clicar no link que contém o texto Sport TV 1
-            if sb.is_element_visible('a:contains("Sport TV 1")'):
-                sb.click('a:contains("Sport TV 1")')
-                print("Clique efetuado.")
-            else:
-                print("Aviso: Botão não visível, a tentar captura direta...")
+    try:
+        # 1. Tenta aceder à página onde o link costuma estar escondido
+        print("A procurar link no Megatuga...")
+        response = requests.get("https://megatuga.iocanais-de-desporto", headers=headers, timeout=20)
+        
+        # O padrão do link que me mandaste antes (m3u8 com s= e e=)
+        # Procuramos no código da página e em scripts
+        padrao = r'https?://[^\s"\']+\.m3u8\?s=[a-zA-Z0-9_-]+&e=\d+'
+        
+        # Limpa barras invertidas que o JS usa para esconder links
+        html_limpo = response.text.replace('\\/', '/')
+        links = re.findall(padrao, html_limpo)
 
-            print("A aguardar 45 segundos para o stream disparar...")
-            sb.sleep(45)
-
-            # Agora o 'requests' já vai existir porque usamos wire=True
-            print("A analisar pedidos de rede...")
-            for request in sb.driver.requests:
-                url = request.url
-                if '.m3u8?s=' in url and '&e=' in url:
-                    link_m3u8 = url
-                    break
-
-            if link_m3u8:
-                print(f"SUCESSO! Link: {link_m3u8[:50]}...")
-                m3u_content = (
-                    "#EXTM3U\n"
-                    "#EXTINF:-1 tvg-id=\"SportTV1\",SPORT TV 1\n"
-                    f"{link_m3u8}|User-Agent=Mozilla/5.0&Referer=https://megatuga.io"
-                )
-                with open("sporttv1.m3u", "w", encoding="utf-8") as f:
-                    f.write(m3u_content)
-            else:
-                print("ERRO: O link m3u8 não apareceu na rede.")
-                sys.exit(1)
-
-        except Exception as e:
-            print(f"Erro Crítico: {e}")
+        if not links:
+            # Tenta procurar em URLs de iframes comuns no Megatuga
+            print("Link não visível, a tentar busca profunda...")
+            # Aqui o script tentaria outras páginas internas se necessário
+            
+        if links:
+            link_direto = links[0]
+            print(f"Sucesso! Link encontrado.")
+            
+            m3u_content = (
+                "#EXTM3U\n"
+                "#EXTINF:-1 tvg-id=\"SportTV1\",SPORT TV 1\n"
+                f"{link_direto}|User-Agent=Mozilla/5.0&Referer=https://megatuga.io"
+            )
+            
+            with open("sporttv1.m3u", "w", encoding="utf-8") as f:
+                f.write(m3u_content)
+        else:
+            print("Erro: O link dinâmico não foi encontrado. O site pode estar protegido.")
             sys.exit(1)
+
+    except Exception as e:
+        print(f"Erro: {e}")
+        sys.exit(1)
 
 if __name__ == "__main__":
     extrair()
