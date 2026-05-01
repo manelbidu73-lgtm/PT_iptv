@@ -17,28 +17,29 @@ def extrair():
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 
     try:
-        
         print("A abrir o Megatuga...")
-        driver.get("https://megatuga.io/canais-de-desporto") # Página onde estão os botões
-        time.sleep(10)
+        driver.get("https://megatuga.io/canais-de-desporto") 
+        time.sleep(15) # Aumentei um pouco para garantir o carregamento
 
         # Procura o botão da Sport TV 1 e clica nele
         try:
             print("A selecionar Sport TV 1...")
-            # Procura por um elemento que contenha o texto 'Sport TV 1' e clica
-            botao = driver.find_element("xpath", "//*[contains(text(), 'Sport TV 1')]")
+            # XPATH melhorado para encontrar o link exato
+            botao = driver.find_element("xpath", "//a[contains(., 'Sport TV 1')]")
             driver.execute_script("arguments[0].click();", botao)
             print("Clique efetuado!")
         except Exception as e:
-            print(f"Aviso: Não foi possível clicar no botão (talvez já esteja no canal). Erro: {e}")
+            print(f"Aviso: Nao foi possivel clicar. Erro: {e}")
 
         print("A aguardar 40 segundos para o player disparar o link na rede...")
-        time.sleep(40) # O Megatuga é lento a carregar o player real
-        # 1. Capturar o link da rede
+        time.sleep(40) 
+
+        # 1. Capturar o link da rede (procuramos m3u8 genérico já que o site mudou)
         for request in driver.requests:
             if request.response:
                 url = request.url
-                if '.m3u8?s=' in url and '&e=' in url:
+                # No Megatuga o padrão pode ser diferente, vamos procurar apenas .m3u8
+                if '.m3u8' in url and 'ads' not in url:
                     link_m3u8 = url
                     break
 
@@ -48,15 +49,13 @@ def extrair():
             m3u_content = (
                 "#EXTM3U\n"
                 "#EXTINF:-1 tvg-id=\"SportTV1\",SPORT TV 1\n"
-                "#EXTVLCOPT:http-referrer=https://megatuga.io\n"
-                f"{link_m3u8}|User-Agent=Mozilla/5.0&Referer=https://megatuga.io"
-            )
-
+                "#EXTVLCOPT:http-referrer=https://megatuga.io/\n"
+                f"{link_m3u8}|User-Agent=Mozilla/5.0&Referer=https://megatuga.io/"
             )
             with open("sporttv1.m3u", "w", encoding="utf-8") as f:
                 f.write(m3u_content)
         else:
-            print("Erro: Link nao encontrado.")
+            print("Erro: Link nao encontrado na rede.")
             sys.exit(1)
 
     except Exception as e:
