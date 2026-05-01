@@ -1,9 +1,8 @@
 import time
 import sys
+import re
+import requests # Garante que tens este import
 from seleniumwire import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 
 def extrair():
     chrome_options = Options()
