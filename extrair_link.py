@@ -1,62 +1,53 @@
-import requests
-import re
+import time
 import sys
+from seleniumwire import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 def extrair():
-    # URL que indicaste
-    url_canal = "https://v3.sportssonline.click/channels/pt/sporttv1.php"
-    
-    # Headers para parecer um navegador real e evitar o erro 403
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-        'Referer': 'https://sportssonline.click/',
-        'Origin': 'https://sportssonline.click'
-    }
+    chrome_options = Options()
+    chrome_options.add_argument("--headless") # Roda em segundo plano
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
+
+    # Inicia o browser com monitorização de rede
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+    link_m3u8 = None
 
     try:
-        session = requests.Session()
-        # 1. Carrega a página do player
-        response = session.get(url_canal, headers=headers, timeout=20)
+        print("A abrir o site e a monitorizar a rede (Igual ao DownloadHelper)...")
+        driver.get("https://v3.sportssonline.click/channels/pt/sporttv1.php")
         
-        # O padrão do teu link (m3u8 com s= e e=)
-        padrao_m3u8 = r'https?://[^\s"\']+\.m3u8\?s=[a-zA-Z0-9_-]+&e=\d+'
-        
-        # Limpa barras invertidas que o JavaScript usa para esconder o link
-        html_limpo = response.text.replace('\\/', '/')
-        links = re.findall(padrao_m3u8, html_limpo)
+        # Espera 30 segundos para o player carregar e o link aparecer na rede
+        time.sleep(30)
 
-        # 2. Se não estiver no HTML, o link está num script externo (estratégia DownloadHelper)
-        if not links:
-            scripts = re.findall(r'src=["\'](.+?\.js.*?)["\']', response.text)
-            for js_url in scripts:
-                if js_url.startswith('//'): js_url = 'https:' + js_url
-                elif js_url.startswith('/'): js_url = "https://v3.sportssonline.click" + js_url
-                try:
-                    js_res = session.get(js_url, headers=headers, timeout=10)
-                    links += re.findall(padrao_m3u8, js_res.text.replace('\\/', '/'))
-                    if links: break
-                except: continue
+        # Analisa todos os pedidos de rede que o browser fez
+        for request in driver.requests:
+            if request.response:
+                url = request.url
+                # Procura o link com o padrão que me mandaste (s= e e=)
+                if '.m3u8?s=' in url and '&e=' in url:
+                    link_m3u8 = url
+                    break
 
-        if links:
-            link_direto = links[0]
-            # Adiciona o "disfarce" no link para o teu player IPTV não dar 403
-            # O "|" (pipe) é o padrão usado para passar Referer em listas M3U
-            m3u_final = (
+        if link_m3u8:
+            print(f"Sucesso! Link capturado da rede.")
+            # O "|" ajuda o teu player a passar as proteções 403
+            m3u_content = (
                 "#EXTM3U\n"
-                "#EXTINF:-1 tvg-id=\"SportTV1\" tvg-logo=\"https://wikimedia.org\",SPORT TV 1\n"
-                f"{link_direto}|User-Agent={headers['User-Agent']}&Referer={headers['Referer']}"
+                f"#EXTINF:-1 tvg-id=\"SportTV1\" tvg-logo=\"https://wikimedia.org\",SPORT TV 1\n"
+                f"{link_m3u8}|User-Agent=Mozilla/5.0&Referer=https://sportssonline.click"
             )
-            
             with open("sporttv1.m3u", "w", encoding="utf-8") as f:
-                f.write(m3u_final)
-            print("Sucesso! Link capturado e guardado.")
+                f.write(m3u_content)
         else:
-            print("Erro: O link dinâmico não foi encontrado. O IP do GitHub pode estar bloqueado.")
+            print("Erro: O link não passou pela rede. O vídeo pode não ter iniciado.")
             sys.exit(1)
 
-    except Exception as e:
-        print(f"Erro fatal: {e}")
-        sys.exit(1)
+    finally:
+        driver.quit()
 
 if __name__ == "__main__":
     extrair()
