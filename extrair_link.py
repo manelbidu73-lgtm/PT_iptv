@@ -22,8 +22,12 @@ def extrair():
     }
 
     # Inicia o browser com monitorização de rede
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
-    link_m3u8 = None
+        # Adicionamos seleniumwire_options=proxy_options
+    driver = webdriver.Chrome(
+        service=Service(ChromeDriverManager().install()), 
+        options=chrome_options,
+        seleniumwire_options=proxy_options
+    )
 
     try:
         print("A abrir o site e a monitorizar a rede (Igual ao DownloadHelper)...")
