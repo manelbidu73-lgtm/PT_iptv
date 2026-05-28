@@ -2,7 +2,7 @@ import asyncio
 import random
 from playwright.async_api import async_playwright
 # CORREÇÃO: Importa a função universal da biblioteca
-from playwright_stealth import stealth
+import playwright_stealth
 
 async def extrair_com_stealth_e_sessao():
     async with async_playwright() as p:
@@ -28,7 +28,7 @@ async def extrair_com_stealth_e_sessao():
         page = await context.new_page()
         
         # CORREÇÃO: Ativa o stealth usando a função universal com await
-        await stealth(page)
+        await playwright_stealth.stealth_async(page)
 
         link_final_stream = None
 
