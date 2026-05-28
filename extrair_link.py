@@ -2,7 +2,7 @@ import asyncio
 import random
 from playwright.async_api import async_playwright
 # Importa o módulo correto de camuflagem para Python
-from playwright_stealth import stealth_async
+from playwright_stealth import stealth_sync
 
 async def extrair_com_stealth_e_sessao():
     async with async_playwright() as p:
@@ -28,7 +28,8 @@ async def extrair_com_stealth_e_sessao():
         page = await context.new_page()
         
         # APLICA O STEALTH: Esta linha ativa a camuflagem antibot na página criada
-        await stealth_async(page)
+        await stealth_sync(page)
+
 
         link_final_stream = None
 
