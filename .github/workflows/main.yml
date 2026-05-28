@@ -1,38 +1,53 @@
-name: Update SportTV1 Link
+name: Atualizador IPTV Dzeko11 Stealth
 
+# Define os gatilhos de execução
 on:
   schedule:
-    - cron: "*/30 * * * *" # Atualiza a cada 30 minutos
-  workflow_dispatch: # Permite-te carregar no botão para testar
+    # Executa automaticamente a cada 3 horas (Ajuste o cron se o token durar menos)
+    - cron: '0 */1 * * *'
+  workflow_dispatch: # Permite que você clique no botão "Run workflow" para testar manualmente
 
 jobs:
-  build:
+  build-and-run:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+    # 1. Baixa o código do seu repositório GitHub para a máquina virtual
+    - name: Checkout do código
+      uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
+    # 2. Configura o ambiente Python no servidor do GitHub
+    - name: Configurar Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
 
-      - name: Instalar Dependencias Selenium
-        run: |
-          pip install selenium-wire webdriver-manager blinker==1.7.0 requests
+    # 3. Instala o Playwright e as ferramentas de camuflagem (Stealth) contra o Cloudflare
+    - name: Instalar dependências do Python
+      run: |
+        pip install playwright playwright-extra playwright-extra-plugin-stealth
 
-      - name: Executar Extracao
-        # O Selenium corre em modo headless (sem janela) no servidor
-        run: python extrair_link.py
+    # 4. Baixa o navegador Chromium e instala as dependências de sistema do Linux (--with-deps)
+    - name: Instalar Navegador Chromium e dependências do sistema
+      run: |
+        playwright install chromium --with-deps
 
-      - name: Publicar Alteracoes
-        run: |
-          git config --global user.name "IPTV Bot"
-          git config --global user.email "bot@github.com"
-          git add sporttv1.m3u
-          # Só faz commit se o ficheiro tiver mudado
-          git commit -m "Auto Update: $(date +'%H:%M')" || echo "Sem alterações"
+    # 5. Executa o script potente que criamos no passo anterior
+    # (Certifique-se de que o nome do arquivo abaixo coincide com o seu script)
+    - name: Executar Script de Captura Furtiva
+      run: python extrair_link.py
+
+    # 6. Salva o arquivo playlist.m3u atualizado de volta no seu repositório
+    - name: Commitar e dar Push na Playlist atualizada
+      run: |
+        git config --local user.email "actions@github.com"
+        git config --local user.name "GitHub Actions Bot"
+        
+        # Verifica se o arquivo sporttv2.m3u realmente foi gerado ou modificado
+        if git diff --quiet sporttv2.m3u; then
+          echo "Nenhuma alteração detetada na playlist."
+        else
+          git add playlist.m3u
+          git commit -m "Playlist atualizada automaticamente com novo Token"
           git push
+        fi
