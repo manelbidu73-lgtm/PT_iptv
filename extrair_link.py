@@ -11,7 +11,7 @@ async def extrair_com_stealth_e_sessao():
         p.selectors.set_test_id_attribute("data-testid")
         
         browser = await p.chromium.launch(
-            headless=False, # Mude para True se for rodar no servidor do GitHub Actions
+            headless=True, # Mude para True se for rodar no servidor do GitHub Actions
             args=[
                 "--disable-blink-features=AutomationControlled",
                 "--no-sandbox",
