@@ -1,28 +1,24 @@
 name: Atualizador IPTV Dzeko11 Stealth
 
-# Define os gatilhos de execução
 on:
   schedule:
-    # Executa automaticamente a cada 3 horas (Ajuste o cron se o token durar menos)
     - cron: '0 */1 * * *'
-  workflow_dispatch: # Permite que você clique no botão "Run workflow" para testar manualmente
+  workflow_dispatch:
 
 jobs:
   build-and-run:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Baixa o código do seu repositório GitHub para a máquina virtual
-    - name: Checkout do código
+    - name: Checkout do codigo
       uses: actions/checkout@v4
 
-    # 2. Configura o ambiente Python no servidor do GitHub
     - name: Configurar Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.10'
 
-          - name: Instalar dependências do Python
+    - name: Instalar dependencias do Python
       run: |
         pip install playwright
 
@@ -30,25 +26,17 @@ jobs:
       run: |
         playwright install chromium --with-deps
 
-    # 5. Executa o script potente que criamos no passo anterior
-    # (Certifique-se de que o nome do arquivo abaixo coincide com o seu script)
-    - name: Executar Script de Captura Furtiva
+    - name: Executar Script de Captura
       run: python extrair_link.py
 
-    # 6. Salva o arquivo playlist.m3u atualizado de volta no seu repositório
-    - name: Commitar e dar Push na Playlist atualizada
+    - name: Commitar e dar Push na Playlist
       run: |
         git config --local user.email "actions@github.com"
         git config --local user.name "GitHub Actions Bot"
-        
-        # Verifica se o arquivo sporttv2.m3u realmente foi gerado ou modificado
         if git diff --quiet sporttv2.m3u; then
-          echo "Nenhuma alteração detetada na playlist."
+          echo "Nenhuma alteracao detetada na playlist."
         else
           git add sporttv2.m3u
           git commit -m "Playlist atualizada automaticamente com novo Token"
           git push
         fi
-
-
-        
