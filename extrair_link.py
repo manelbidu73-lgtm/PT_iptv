@@ -55,7 +55,7 @@ async def extrair_com_stealth_e_sessao():
 
             # PASSO 2: Ir direto ao segundo site simulando que veio do primeiro (sem cliques)
             # SUBSTITUA PELA URL DO SEGUNDO SITE QUE DETECTOU
-            url_segundo_site = "https://url-do-segundo-site-aqui.com"
+            url_segundo_site = "https://main.wwin.cloud/player/60"
             
             print(f"2. A saltar diretamente para o segundo site com o Referer injetado...")
             await page.goto(
@@ -77,7 +77,7 @@ async def extrair_com_stealth_e_sessao():
                     f"#EXTVLCOPT:http-referrer=https://dzeko11.de\n"
                     f"{link_final_stream}\n"
                 )
-                with open("playlist.m3u", "w", encoding="utf-8") as f:
+                with open("sporttv2.m3u", "w", encoding="utf-8") as f:
                     f.write(conteudo_m3u)
                 print("Ficheiro playlist.m3u atualizado com sucesso!")
             else:
