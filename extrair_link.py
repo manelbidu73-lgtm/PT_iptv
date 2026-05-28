@@ -1,38 +1,43 @@
 import asyncio
 import random
 from playwright.async_api import async_playwright
-# CORREÇÃO: Importa a função universal da biblioteca
-from playwright_stealth import stealth_sync
 
-async def extrair_com_stealth_e_sessao():
+async def extrair_com_sessao_nativa():
     async with async_playwright() as p:
         
-        # Inicia o navegador (Mantenha headless=True para o GitHub Actions)
+        # Lança o Chromium aplicando argumentos nativos para ocultar a automação
         browser = await p.chromium.launch(
             headless=True, 
             args=[
                 "--disable-blink-features=AutomationControlled",
                 "--no-sandbox",
-                "--disable-infobars"
+                "--disable-infobars",
+                "--disable-dev-shm-usage"
             ]
         )
         
-        # Cria um contexto imitando um computador real (Windows/Chrome)
+        # Criamos o contexto emulando perfeitamente um navegador Chrome real em Windows
         context = await browser.new_context(
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
             viewport={"width": 1920, "height": 1080},
             locale="pt-PT",
-            timezone_id="Europe/Lisbon"
+            timezone_id="Europe/Lisbon",
+            extra_http_headers={
+                "Accept-Language": "pt-PT,pt;q=0.9,en-US;q=0.8,en;q=0.7",
+                "Sec-Ch-Ua": '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+                "Sec-Ch-Ua-Mobile": "?0",
+                "Sec-Ch-Ua-Platform": '"Windows"'
+            }
         )
         
         page = await context.new_page()
         
-        # CORREÇÃO: Ativa o stealth usando a função universal com await
-        stealth_sync(page)
+        # Injeta um script nativo na página para apagar o rasto do 'navigator.webdriver'
+        await page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 
         link_final_stream = None
 
-        # Escuta o tráfego oculto da rede procurando o ficheiro .m3u8 final
+        # Escuta ativa da rede
         async def capturar_link(request):
             nonlocal link_final_stream
             url = request.url
@@ -44,33 +49,31 @@ async def extrair_com_stealth_e_sessao():
         page.on("request", capturar_link)
 
         try:
-            # PASSO 1: Entrar no Dzeko11.de para validar o Cloudflare e guardar os Cookies
-            print("1. A aceder ao dzeko11.de com proteção Stealth...")
+            # PASSO 1: Validar cookies no site pai
+            print("1. A aceder ao dzeko11.de...")
             await page.goto("https://dzeko11.de", wait_until="commit", timeout=60000)
             
-            # Aguarda um tempo humano aleatório enquanto o Cloudflare resolve o desafio invisível
             tempo_espera = random.randint(10, 15)
-            print(f"A aguardar {tempo_espera} segundos para o Cloudflare validar a sessão...")
+            print(f"A aguardar {tempo_espera} segundos para estabilização de sessão...")
             await page.wait_for_timeout(tempo_espera * 1000)
 
-            # PASSO 2: Ir direto ao segundo site simulando que veio do primeiro (sem cliques)
-            # SUBSTITUA PELA URL DO SEGUNDO SITE QUE DETECTOU
+            # PASSO 2: Ir direto ao segundo site com Referer injetado
+            # SUBSTITUA ABAIXO PELA URL DO SEGUNDO SITE QUE DETECTOU
             url_segundo_site = "https://main.wwin.cloud/player/60"
             
-            print(f"2. A saltar diretamente para o segundo site com o Referer injetado...")
+            print(f"2. A saltar diretamente para o segundo site com o Referer...")
             await page.goto(
                 url_segundo_site, 
-                referer="https://dzeko11.de", # Engana o servidor provando a origem legítima
+                referer="https://dzeko11.de", 
                 wait_until="load", 
                 timeout=60000
             )
 
-            # PASSO 3: Dar tempo para o player do segundo site começar a carregar o vídeo
+            # PASSO 3: Aguardar o player disparar o link m3u8
             print("3. A aguardar que o stream dispare o token na rede...")
             await page.wait_for_timeout(15000)
 
             if link_final_stream:
-                # Gera a playlist final formatada
                 conteudo_m3u = (
                     f"#EXTM3U\n"
                     f"#EXTINF:-1, Stream Dzeko11\n"
@@ -84,9 +87,9 @@ async def extrair_com_stealth_e_sessao():
                 print("[AVISO] O segundo site abriu com sucesso, mas nenhum .m3u8 foi disparado.")
 
         except Exception as e:
-            print(f"[ERRO] O Cloudflare ou o redirecionamento falhou: {e}")
+            print(f"[ERRO] O processo falhou: {e}")
             await page.screenshot(path="screenshot_bloqueio.png")
         finally:
             await browser.close()
 
-asyncio.run(extrair_com_stealth_e_sessao())
+asyncio.run(extrair_com_sessao_nativa())
