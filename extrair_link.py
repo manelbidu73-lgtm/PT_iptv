@@ -1,17 +1,15 @@
 import asyncio
 import random
-from playwright_extra import async_playwright
-from playwright_extra_plugin_stealth import stealth_sync
+from playwright.async_api import async_playwright
+# Importa o módulo correto de camuflagem para Python
+from playwright_stealth import stealth_async
 
 async def extrair_com_stealth_e_sessao():
-    # Iniciamos o Playwright com suporte a plugins de ocultação
     async with async_playwright() as p:
         
-        # Ativa o modo furtivo para mascarar assinaturas de automação (evita o bloqueio do Cloudflare)
-        p.selectors.set_test_id_attribute("data-testid")
-        
+        # Inicia o navegador (Mantenha headless=True para o GitHub Actions)
         browser = await p.chromium.launch(
-            headless=True, # Mude para True se for rodar no servidor do GitHub Actions
+            headless=True, 
             args=[
                 "--disable-blink-features=AutomationControlled",
                 "--no-sandbox",
@@ -29,10 +27,8 @@ async def extrair_com_stealth_e_sessao():
         
         page = await context.new_page()
         
-        # Aplica o pacote stealth especificamente nesta página para passar nos testes antibot
-        # (Remove flags como navigator.webdriver = true, altera canvas, WebGL, etc.)
-        # Nota: O pacote stealth_sync aplica-se de forma transparente
-        await page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+        # APLICA O STEALTH: Esta linha ativa a camuflagem antibot na página criada
+        await stealth_async(page)
 
         link_final_stream = None
 
@@ -58,8 +54,8 @@ async def extrair_com_stealth_e_sessao():
             await page.wait_for_timeout(tempo_espera * 1000)
 
             # PASSO 2: Ir direto ao segundo site simulando que veio do primeiro (sem cliques)
-            # COLOQUE A URL DO SEGUNDO SITE AQUI
-            url_segundo_site = "https://main.wwin.cloud/player/60"
+            # SUBSTITUA PELA URL DO SEGUNDO SITE QUE DETECTOU
+            url_segundo_site = "https://url-do-segundo-site-aqui.com"
             
             print(f"2. A saltar diretamente para o segundo site com o Referer injetado...")
             await page.goto(
@@ -81,11 +77,11 @@ async def extrair_com_stealth_e_sessao():
                     f"#EXTVLCOPT:http-referrer=https://dzeko11.de\n"
                     f"{link_final_stream}\n"
                 )
-                with open("sporttv2.m3u", "w", encoding="utf-8") as f:
+                with open("playlist.m3u", "w", encoding="utf-8") as f:
                     f.write(conteudo_m3u)
                 print("Ficheiro playlist.m3u atualizado com sucesso!")
             else:
-                print("[AVISO] O segundo site abriu com sucesso, mas nenhum .m3u8 foi disparado. O jogo pode não ter começado.")
+                print("[AVISO] O segundo site abriu com sucesso, mas nenhum .m3u8 foi disparado.")
 
         except Exception as e:
             print(f"[ERRO] O Cloudflare ou o redirecionamento falhou: {e}")
