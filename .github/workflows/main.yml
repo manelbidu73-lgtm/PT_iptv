@@ -45,7 +45,10 @@ jobs:
         if git diff --quiet sporttv2.m3u; then
           echo "Nenhuma alteração detetada na playlist."
         else
-          git add playlist.m3u
+          git add sporttv2.m3u
           git commit -m "Playlist atualizada automaticamente com novo Token"
           git push
         fi
+
+
+        
