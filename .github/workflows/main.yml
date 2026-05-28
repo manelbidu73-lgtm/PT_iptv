@@ -22,13 +22,11 @@ jobs:
       with:
         python-version: '3.10'
 
-    # 3. Instala o Playwright e as ferramentas de camuflagem (Stealth) contra o Cloudflare
-    - name: Instalar dependências do Python
+          - name: Instalar dependências do Python
       run: |
-        pip install playwright playwright-stealth
+        pip install playwright
 
-    # 4. Baixa o navegador Chromium e instala as dependências de sistema do Linux (--with-deps)
-    - name: Instalar Navegador Chromium e dependências do sistema
+    - name: Instalar Navegador Chromium
       run: |
         playwright install chromium --with-deps
 
