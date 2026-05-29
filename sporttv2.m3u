@@ -1,4 +1,6 @@
 #EXTM3U
-#EXTINF:-1, Stream Dzeko11
-#EXTVLCOPT:http-referrer=https://dzeko11.de
-https://netanjahu.wwin.cloud/secure/00wtn2aLzzxyVHl9aJ8jhIo4_x1ba4JG2h4uENlxFpQ/1780034400/1780037100/sporttv2/index.m3u8
+#EXTINF:-1, SPORT TV 2
+#EXTVLCOPT:http-referrer=https://main.wwin.cloud
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36
+#EXTVLCOPT:http-origin=https://main.wwin.cloud
+https://netanjahu.wwin.cloud/secure/YdK1kK05Ja4rdjqHFjHjhKKpUh68fhw2JjiggsFWpPo/1780047900/1780050600/sporttv2/index.m3u8
