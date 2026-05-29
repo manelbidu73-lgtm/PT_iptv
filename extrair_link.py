@@ -37,7 +37,7 @@ async def extrair_com_sessao_nativa():
 
         link_final_stream = None
 
-        # Escuta ativa da rede
+        # Escuta activa da rede
         async def capturar_link(request):
             nonlocal link_final_stream
             url = request.url
@@ -58,7 +58,6 @@ async def extrair_com_sessao_nativa():
             await page.wait_for_timeout(tempo_espera * 1000)
 
             # PASSO 2: Ir direto ao segundo site com Referer injetado
-            # SUBSTITUA ABAIXO PELA URL DO SEGUNDO SITE QUE DETECTOU
             url_segundo_site = "https://main.wwin.cloud/player/60"
             
             print(f"2. A saltar diretamente para o segundo site com o Referer...")
@@ -74,12 +73,15 @@ async def extrair_com_sessao_nativa():
             await page.wait_for_timeout(15000)
 
             if link_final_stream:
-                 link_com_headers = f"{link_final_stream}|http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36&http-referer=https://main.wwin.cloud/&http-origin=https://main.wwin.cloud"
+                 # ADICIONADO O PROXY À FRENTE DO LINK, MANTENDO O SEU FORMATO COM '|'
+                 link_com_proxy = f"https://codetabs.com{link_final_stream}"
+                 
+                 link_com_headers = f"{link_com_proxy}|http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36&http-referer=https://main.wwin.cloud/&http-origin=https://main.wwin.cloud"
         
                  conteudo_m3u = f"""#EXTM3U
-         #EXTINF:-1, SPORT TV 2
-         {link_com_headers}
-         """
+#EXTINF:-1, SPORT TV 2
+{link_com_headers}
+"""
                  with open("sporttv2.m3u", "w", encoding="utf-8") as f:
                      f.write(conteudo_m3u)
                  print("Ficheiro playlist.m3u atualizado com sucesso!")
@@ -93,3 +95,4 @@ async def extrair_com_sessao_nativa():
             await browser.close()
 
 asyncio.run(extrair_com_sessao_nativa())
+        
