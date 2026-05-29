@@ -76,8 +76,10 @@ async def extrair_com_sessao_nativa():
             if link_final_stream:
                 conteudo_m3u = (
                     f"#EXTM3U\n"
-                    f"#EXTINF:-1, Stream Dzeko11\n"
-                    f"#EXTVLCOPT:http-referrer=https://dzeko11.de\n"
+                    f"#EXTINF:-1, SPORT TV 2\n"
+                    f"#EXTVLCOPT:http-referrer=https://main.wwin.cloud\n"
+                    f"#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36\n"
+                    f"#EXTVLCOPT:http-origin=https://main.wwin.cloud\n"
                     f"{link_final_stream}\n"
                 )
                 with open("sporttv2.m3u", "w", encoding="utf-8") as f:
