@@ -76,11 +76,11 @@ async def extrair_com_sessao_nativa():
             if link_final_stream:
                  link_com_headers = f"{link_final_stream}|http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36&http-referer=https://main.wwin.cloud/&http-origin=https://main.wwin.cloud"
         
-        conteudo_m3u = f"""#EXTM3U
-#EXTINF:-1, SPORT TV 2
-{link_com_headers}
-"""
-            with open("sporttv2.m3u", "w", encoding="utf-8") as f:
+                 conteudo_m3u = f"""#EXTM3U
+         #EXTINF:-1, SPORT TV 2
+         {link_com_headers}
+         """
+                with open("sporttv2.m3u", "w", encoding="utf-8") as f:
                     f.write(conteudo_m3u)
                 print("Ficheiro playlist.m3u atualizado com sucesso!")
             else:
