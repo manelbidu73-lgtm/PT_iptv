@@ -80,9 +80,9 @@ async def extrair_com_sessao_nativa():
          #EXTINF:-1, SPORT TV 2
          {link_com_headers}
          """
-                with open("sporttv2.m3u", "w", encoding="utf-8") as f:
-                    f.write(conteudo_m3u)
-                print("Ficheiro playlist.m3u atualizado com sucesso!")
+                 with open("sporttv2.m3u", "w", encoding="utf-8") as f:
+                     f.write(conteudo_m3u)
+                 print("Ficheiro playlist.m3u atualizado com sucesso!")
             else:
                 print("[AVISO] O segundo site abriu com sucesso, mas nenhum .m3u8 foi disparado.")
 
